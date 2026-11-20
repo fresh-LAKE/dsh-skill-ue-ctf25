@@ -1,0 +1,16 @@
+* Lavaball on track: Flag 20 is off
+	Lavaball on track : Set Alterable Value(302) to x初速度( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(303) to y初速度( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(304) to 初始状态( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(305) to 反向碰撞类型( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(306) to 四方向碰撞类型( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(307) to 掉落选项( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(308) to 1 - 踩上掉落后禁用检测( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(309) to 1 - 踩上掉落后禁用恢复( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(310) to 渐变时间( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(313) to 开启反向( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value(314) to 0
+	Lavaball on track : Set Alterable Value(900) to 实心类型( "Lavaball on track" )
+	 Lavaball on track : Set Flag 20 on
+	Start loop for each one of Lavaball on track, loop name "init_movement"
+

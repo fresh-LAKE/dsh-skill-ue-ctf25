@@ -1,0 +1,4 @@
+interface:
+  display_name: "UE / CTF2.5 开发"
+  short_description: "基于 UE 手册与原始事件，开发 CTF2.5 物件并读写二进制剪贴板"
+  default_prompt: "使用 $ue-ctf25，参照 UE 手册和原始事件实现我的开发需求。"

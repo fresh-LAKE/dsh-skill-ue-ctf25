@@ -1,0 +1,121 @@
+// 跟随
+
+* Alterable Value AP of Mario <= 0
+	Group.MarioAni : Set position at (0,0) from Mario
+	 Group.MarioAni : Set angle to Angle( "Mario" ) (Quality = 1)
+	Group.MarioAni : Set direction to 8 * ( 1 - Alterable Value AS( "Mario" ) )
+
+// 切换当前动画
+
+* Mario of Globalvar = 0
++ Number of Mario Small = 0
+	New Objects : Create Mario Small at (0,0) from Mario
+	Mario Big : Destroy
+	Mario Fire : Destroy
+	Mario Lui : Destroy
+	Mario Beet : Destroy
+
+* Mario of Globalvar = 1
++ Number of Mario Big = 0
+	New Objects : Create Mario Big at (0,0) from Mario
+	Mario Small : Destroy
+	Mario Fire : Destroy
+	Mario Lui : Destroy
+	Mario Beet : Destroy
+
+* Mario of Globalvar = 2
++ Number of Mario Fire = 0
+	New Objects : Create Mario Fire at (0,0) from Mario
+	Mario Small : Destroy
+	Mario Big : Destroy
+	Mario Lui : Destroy
+	Mario Beet : Destroy
+
+* Mario of Globalvar = 3
++ Number of Mario Lui = 0
+	New Objects : Create Mario Lui at (0,0) from Mario
+	Mario Small : Destroy
+	Mario Big : Destroy
+	Mario Fire : Destroy
+	Mario Beet : Destroy
+
+* Mario of Globalvar = 4
++ Number of Mario Beet = 0
+	New Objects : Create Mario Beet at (0,0) from Mario
+	Mario Small : Destroy
+	Mario Big : Destroy
+	Mario Fire : Destroy
+	Mario Lui : Destroy
+
+// 最开始不播放 Appearing
+
+* Run this event once
+	Group.MarioAni : Change animation sequence to Stopped
+
+* Group.MarioAni animation Launching is playing
+	Group.MarioAni : Restore speed of animation
+
+* NOT Group.MarioAni animation Appearing is playing
++ Alterable Value AP of Mario <= 0
+
+	// 行走
+
+	+ NOT Group.MarioAni animation Launching is playing
+
+		+ Alterable Value(100) of Mario = 0
+		+ Alterable Value(201) of Mario = 0
+		+ Alterable Value AQ of Mario = 0
+		  OR (logical)
+		+ Alterable Value AQ of Mario = 2
+			Group.MarioAni : Change animation sequence to Stopped
+
+		+ Alterable Value(100) of Mario = 0
+		+ Alterable Value(201) of Mario > 0
+		+ Alterable Value(204) of Mario = 0
+		+ Alterable Value AQ of Mario = 0
+			Group.MarioAni : Change animation sequence to Walking
+			Group.MarioAni : Change speed of animation to Alterable Value AT( "Mario" )
+
+	+ Alterable Value(100) of Mario = 0
+	+ Alterable Value AQ of Mario = 1
+		Group.MarioAni : Change animation sequence to Crouch down
+
+	+ Alterable Value(100) of Mario = 1
+
+		+ NOT Mario is overlapping Group.Water
+			Group.MarioAni : Change animation sequence to Jumping
+
+		+ Mario is overlapping Group.Water
+			Group.MarioAni : Change animation sequence to Animation 12
+			Group.MarioAni : Restore speed of animation
+
+* Player 1 Pressed fire 1
++ Alterable Value(100) of Mario = 1
++ Mario is overlapping Group.Water
++ NOT Group.MarioAni animation Appearing is playing
+	Group.MarioAni : Restore animation sequence
+
+// 绿果特效
+// AD: 绿果计时
+
+* Mario of Globalvar = 3
++ Alterable Value(100) of Mario = 1
+	Mario : Add 1 to Alterable Value AD
+
+	+ Alterable Value AD of Mario >= 3
+		Mario : Set Alterable Value AD to 0
+
+		+ NOT Mario is overlapping Group.Water
+			New Objects : Create Lui Shadow at (0,0) from Mario Lui
+			Lui Shadow : Set direction to Dir( "Mario Lui" )
+			Lui Shadow : Set Alterable Value(180) to AltValN( "Mario", 180 )
+			 Lui Shadow : Bring to back
+
+		+ Mario is overlapping Group.Water
+			New Objects : Create Lui Shadow at (0,0) from Mario Lui
+			Lui Shadow : Change animation sequence to Crouch down
+			Lui Shadow : Force animation frame to Image( "Mario Lui" )
+			Lui Shadow : Set direction to Dir( "Mario Lui" )
+			Lui Shadow : Set Alterable Value(180) to AltValN( "Mario", 180 )
+			 Lui Shadow : Bring to back
+

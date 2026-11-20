@@ -1,0 +1,34 @@
+* On each one of Fly Troopa Blue, loop name "init"
+
+	// 碰撞检测类型
+
+	+ Always
+		Fly Troopa Blue : Set Alterable Value(1002) to 2
+		Fly Troopa Blue : Set Alterable Value(1003) to 2
+
+	// 重力默认设置
+
+	+ Always
+		Fly Troopa Blue : Set Alterable Value(100) to 1
+		Fly Troopa Blue : Set Alterable Value(102) to 重力方向( "Gravity Default Settings" )
+		Fly Troopa Blue : Set Alterable Value(103) to 空中加速度（百分之一）( "Gravity Default Settings" ) * 0.4 / 100.0
+		Fly Troopa Blue : Set Alterable Value(104) to 空中减速度（百分之一）( "Gravity Default Settings" ) * 0.4 / 100.0
+		Fly Troopa Blue : Set Alterable Value(105) to 水中加速度（百分之一）( "Gravity Default Settings" ) / 100.0
+		Fly Troopa Blue : Set Alterable Value(106) to 水中减速度（百分之一）( "Gravity Default Settings" ) / 100.0
+		Fly Troopa Blue : Set Alterable Value(107) to 空中最大速度( "Gravity Default Settings" )
+		Fly Troopa Blue : Set Alterable Value(108) to 水中最大速度( "Gravity Default Settings" )
+
+	// 移动默认设置
+
+	+ Always
+		Fly Troopa Blue : Set Alterable Value(201) to 行走速度( "Fly Troopa Blue" )
+		Fly Troopa Blue : Set Alterable Value(202) to Dir( "Fly Troopa Blue" ) * 11.25
+		Fly Troopa Blue : Set Alterable Value(203) to 1
+		Fly Troopa Blue : Set Alterable Value(205) to 4
+
+* Always
+	Fly Troopa Blue : Set direction to 16 * AltValN( "Fly Troopa Blue", 202 ) / 180
+
+* Alterable Value(100) of Fly Troopa Blue = 0
+	Fly Troopa Blue : Set Alterable Value(101) to 0 - 跳跃高度( "Fly Troopa Blue" )
+

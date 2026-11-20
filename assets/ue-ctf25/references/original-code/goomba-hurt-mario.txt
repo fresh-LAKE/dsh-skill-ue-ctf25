@@ -1,0 +1,7 @@
+* Alterable Value(1000) of Goomba <> -1
++ Goomba is overlapping Mario
++ Y position of Mario > Y( "Goomba" ) - 16
++ Alterable Value(1000) of Mario <> -1
++ Mario: 无敌 is off
+	 Mario : Set 受伤 on
+

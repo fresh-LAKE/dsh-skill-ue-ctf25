@@ -1,0 +1,843 @@
+* On loop "frame_start"
+
+	[ Init ]
+
+		// 初始化提前
+
+		+ Alterable Value(1000) of Mario = 0
+
+			+ Always
+				Start loop for each one of Mario, loop name "init"
+
+			+ Always
+				Mario : Set Alterable Value AW to AltValN( "Mario", 102 ) mod 360
+
+			+ Alterable Value AW of Mario < 0
+				Special : Start loop "mario_gravity_dir_get" -1 times
+
+			+ Always
+				Mario : Change animation sequence to big
+
+			+ Mario of Globalvar = 0
+			  OR (logical)
+			+ Alterable Value AQ of Mario = 1
+				Mario : Change animation sequence to small
+
+			+ Always
+				Mario : Set Alterable Value AL to Anim Number( "Mario" )
+
+	[ Collision Box ]
+
+		// 判定
+		// AL: 碰撞动画记录
+
+		+ Always
+			Mario : Set Alterable Value AL to Anim Number( "Mario" )
+
+		+ Always
+			Mario : Change animation sequence to big
+
+		+ Mario of Globalvar = 0
+		  OR (logical)
+		+ Alterable Value AQ of Mario = 1
+			Mario : Change animation sequence to small
+
+		// 供特殊控件修改判定大小
+		// 若需要防卡墙，置 AL 不等于 Mario.Anim Number（如 -1）
+
+		+ Always
+			Special : Start loop "mario_collision_override" 1 times
+
+		// 防穿墙，延迟到 MovingBlock 补正以后
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value AP of Mario <= 0
+		+ Alterable Value AL of Mario <> Anim Number( "Mario" )
+			Mario : Set Alterable Value AQ to 2
+
+	[ Walk ]
+
+		// 占用变量 AS 作为“方向”（相对于重力向下时）
+		// AS = 1：向右
+		//      =-1：向左
+		// 占用变量 AT 作为速度（最后传递给 Group.Movable 处理）
+
+		// 控制
+		// （以下方向均相对于重力向下时）
+		// AZ 延迟操作（圆形重力等需要）
+		// 
+		// AX = 0: 没有按向左
+		//      = 1: 按住向左
+		// AY = 0: 没有按向右
+		//       = 1: 按住向右
+		// 
+		// AW: 记录重力方向
+		// 
+		// AU: 记录最后一次向左的按键
+		// AV: 记录最后一次向右的按键
+		// 1左 2右 3上 4下
+
+		// 释放按键
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AZ of Mario > 0
+
+			+ Repeat while Player 1 Moved top
+			+ NOT Repeat while Player 1 Moved down
+			+ NOT Repeat while Player 1 Moved left
+			+ NOT Repeat while Player 1 Moved right
+			  OR (logical)
+			+ Repeat while Player 1 Moved down
+			+ NOT Repeat while Player 1 Moved top
+			+ NOT Repeat while Player 1 Moved left
+			+ NOT Repeat while Player 1 Moved right
+			  OR (logical)
+			+ Repeat while Player 1 Moved left
+			+ NOT Repeat while Player 1 Moved top
+			+ NOT Repeat while Player 1 Moved down
+			+ NOT Repeat while Player 1 Moved right
+			  OR (logical)
+			+ Repeat while Player 1 Moved right
+			+ NOT Repeat while Player 1 Moved top
+			+ NOT Repeat while Player 1 Moved down
+			+ NOT Repeat while Player 1 Moved left
+				Mario : Set Alterable Value AZ to 1
+
+			+ Alterable Value AU of Mario = 1
+
+				+ NOT Repeat while Player 1 Moved left
+				  OR (logical)
+				+ Repeat while Player 1 Moved right
+					Mario : Set Alterable Value AU to 0
+					Mario : Set Alterable Value AX to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AU of Mario = 2
+
+				+ NOT Repeat while Player 1 Moved right
+				  OR (logical)
+				+ Repeat while Player 1 Moved left
+					Mario : Set Alterable Value AU to 0
+					Mario : Set Alterable Value AX to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AU of Mario = 3
+
+				+ NOT Repeat while Player 1 Moved top
+				  OR (logical)
+				+ Repeat while Player 1 Moved down
+					Mario : Set Alterable Value AU to 0
+					Mario : Set Alterable Value AX to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AU of Mario = 4
+
+				+ NOT Repeat while Player 1 Moved down
+				  OR (logical)
+				+ Repeat while Player 1 Moved top
+					Mario : Set Alterable Value AU to 0
+					Mario : Set Alterable Value AX to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AV of Mario = 1
+
+				+ NOT Repeat while Player 1 Moved left
+				  OR (logical)
+				+ Repeat while Player 1 Moved right
+					Mario : Set Alterable Value AV to 0
+					Mario : Set Alterable Value AY to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AV of Mario = 2
+
+				+ NOT Repeat while Player 1 Moved right
+				  OR (logical)
+				+ Repeat while Player 1 Moved left
+					Mario : Set Alterable Value AV to 0
+					Mario : Set Alterable Value AY to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AV of Mario = 3
+
+				+ NOT Repeat while Player 1 Moved top
+				  OR (logical)
+				+ Repeat while Player 1 Moved down
+					Mario : Set Alterable Value AV to 0
+					Mario : Set Alterable Value AY to 0
+					Mario : Set Alterable Value AZ to 0
+
+			+ Alterable Value AV of Mario = 4
+
+				+ NOT Repeat while Player 1 Moved down
+				  OR (logical)
+				+ Repeat while Player 1 Moved top
+					Mario : Set Alterable Value AV to 0
+					Mario : Set Alterable Value AY to 0
+					Mario : Set Alterable Value AZ to 0
+
+		// 按键
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AZ of Mario = 0
+
+			+ Repeat while Player 1 Moved right
+			+ NOT Repeat while Player 1 Moved left
+			  OR (logical)
+			+ Repeat while Player 1 Moved left
+			+ NOT Repeat while Player 1 Moved right
+			  OR (logical)
+			+ Repeat while Player 1 Moved top
+			+ NOT Repeat while Player 1 Moved down
+			  OR (logical)
+			+ Repeat while Player 1 Moved down
+			+ NOT Repeat while Player 1 Moved top
+				Mario : Set Alterable Value AU to 0
+				Mario : Set Alterable Value AV to 0
+				Mario : Set Alterable Value AX to 0
+				Mario : Set Alterable Value AY to 0
+
+				+ Alterable Value AW of Mario >= 225
+				+ Alterable Value AW of Mario <= 315
+
+					+ Repeat while Player 1 Moved left
+						Mario : Set Alterable Value AX to 1
+						Mario : Set Alterable Value AU to 1
+						Mario : Set Alterable Value AZ to 1
+
+					+ Repeat while Player 1 Moved right
+						Mario : Set Alterable Value AY to 1
+						Mario : Set Alterable Value AV to 2
+						Mario : Set Alterable Value AZ to 1
+
+				+ Alterable Value AW of Mario >= 45
+				+ Alterable Value AW of Mario <= 135
+
+					+ Repeat while Player 1 Moved right
+						Mario : Set Alterable Value AX to 1
+						Mario : Set Alterable Value AU to 2
+						Mario : Set Alterable Value AZ to 1
+
+					+ Repeat while Player 1 Moved left
+						Mario : Set Alterable Value AY to 1
+						Mario : Set Alterable Value AV to 1
+						Mario : Set Alterable Value AZ to 1
+
+				+ Alterable Value AW of Mario >= 135
+				+ Alterable Value AW of Mario <= 225
+
+					+ Repeat while Player 1 Moved top
+						Mario : Set Alterable Value AX to 1
+						Mario : Set Alterable Value AU to 3
+						Mario : Set Alterable Value AZ to 1
+
+					+ Repeat while Player 1 Moved down
+						Mario : Set Alterable Value AY to 1
+						Mario : Set Alterable Value AV to 4
+						Mario : Set Alterable Value AZ to 1
+
+				+ Alterable Value AW of Mario <= 45
+				  OR (logical)
+				+ Alterable Value AW of Mario >= 315
+
+					+ Repeat while Player 1 Moved down
+						Mario : Set Alterable Value AX to 1
+						Mario : Set Alterable Value AU to 4
+						Mario : Set Alterable Value AZ to 1
+
+					+ Repeat while Player 1 Moved top
+						Mario : Set Alterable Value AY to 1
+						Mario : Set Alterable Value AV to 3
+						Mario : Set Alterable Value AZ to 1
+
+		// 按键转向
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AZ of Mario = 1
+
+			+ Alterable Value AX of Mario = 1
+
+				+ Alterable Value AU of Mario = 1
+				  OR (logical)
+				+ Alterable Value AU of Mario = 2
+
+					+ Repeat while Player 1 Moved top
+					+ NOT Repeat while Player 1 Moved down
+
+						+ Alterable Value AW of Mario <= 45
+						  OR (logical)
+						+ Alterable Value AW of Mario >= 315
+							Mario : Set Alterable Value AU to 0
+							Mario : Set Alterable Value AV to 3
+							Mario : Set Alterable Value AX to 0
+							Mario : Set Alterable Value AY to 1
+							Mario : Set Alterable Value AZ to 2
+
+					+ Repeat while Player 1 Moved down
+					+ NOT Repeat while Player 1 Moved top
+
+						+ Alterable Value AW of Mario >= 135
+						+ Alterable Value AW of Mario <= 225
+							Mario : Set Alterable Value AU to 0
+							Mario : Set Alterable Value AV to 4
+							Mario : Set Alterable Value AX to 0
+							Mario : Set Alterable Value AY to 1
+							Mario : Set Alterable Value AZ to 2
+
+				+ Alterable Value AU of Mario = 3
+				  OR (logical)
+				+ Alterable Value AU of Mario = 4
+
+					+ Repeat while Player 1 Moved left
+					+ NOT Repeat while Player 1 Moved right
+
+						+ Alterable Value AW of Mario >= 45
+						+ Alterable Value AW of Mario <= 135
+							Mario : Set Alterable Value AU to 0
+							Mario : Set Alterable Value AV to 1
+							Mario : Set Alterable Value AX to 0
+							Mario : Set Alterable Value AY to 1
+							Mario : Set Alterable Value AZ to 2
+
+					+ Repeat while Player 1 Moved right
+					+ NOT Repeat while Player 1 Moved left
+
+						+ Alterable Value AW of Mario >= 225
+						+ Alterable Value AW of Mario <= 315
+							Mario : Set Alterable Value AU to 0
+							Mario : Set Alterable Value AV to 2
+							Mario : Set Alterable Value AX to 0
+							Mario : Set Alterable Value AY to 1
+							Mario : Set Alterable Value AZ to 2
+
+			+ Alterable Value AY of Mario = 3
+
+				+ Alterable Value AV of Mario = 1
+				  OR (logical)
+				+ Alterable Value AV of Mario = 2
+
+					+ Repeat while Player 1 Moved top
+					+ NOT Repeat while Player 1 Moved down
+
+						+ Alterable Value AW of Mario >= 135
+						+ Alterable Value AW of Mario <= 225
+							Mario : Set Alterable Value AU to 3
+							Mario : Set Alterable Value AV to 0
+							Mario : Set Alterable Value AX to 1
+							Mario : Set Alterable Value AY to 0
+							Mario : Set Alterable Value AZ to 2
+
+					+ Repeat while Player 1 Moved down
+					+ NOT Repeat while Player 1 Moved top
+
+						+ Alterable Value AW of Mario <= 45
+						  OR (logical)
+						+ Alterable Value AW of Mario >= 315
+							Mario : Set Alterable Value AU to 4
+							Mario : Set Alterable Value AV to 0
+							Mario : Set Alterable Value AX to 1
+							Mario : Set Alterable Value AY to 0
+							Mario : Set Alterable Value AZ to 2
+
+				+ Alterable Value AV of Mario = 3
+				  OR (logical)
+				+ Alterable Value AV of Mario = 4
+
+					+ Repeat while Player 1 Moved left
+					+ NOT Repeat while Player 1 Moved right
+
+						+ Alterable Value AW of Mario >= 225
+						+ Alterable Value AW of Mario <= 315
+							Mario : Set Alterable Value AU to 1
+							Mario : Set Alterable Value AV to 0
+							Mario : Set Alterable Value AX to 1
+							Mario : Set Alterable Value AY to 0
+							Mario : Set Alterable Value AZ to 2
+
+					+ Repeat while Player 1 Moved right
+					+ NOT Repeat while Player 1 Moved left
+
+						+ Alterable Value AW of Mario >= 45
+						+ Alterable Value AW of Mario <= 135
+							Mario : Set Alterable Value AU to 2
+							Mario : Set Alterable Value AV to 0
+							Mario : Set Alterable Value AX to 1
+							Mario : Set Alterable Value AY to 0
+							Mario : Set Alterable Value AZ to 2
+
+		// 行走
+
+		// 加速
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AX of Mario = 0
+		+ Alterable Value AY of Mario = 1
+		+ Alterable Value AS of Mario = 1
+		+ Alterable Value AQ of Mario = 0
+		  OR (logical)
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AX of Mario = 1
+		+ Alterable Value AY of Mario = 0
+		+ Alterable Value AS of Mario = -1
+		+ Alterable Value AQ of Mario = 0
+
+			+ Alterable Value AT of Mario < 初速度( "Mario" )
+				Mario : Set Alterable Value AT to 初速度( "Mario" )
+
+			+ NOT Mario is overlapping Group.Water
+
+				+ NOT Repeat while Player 1 Pressed fire 2
+
+					+ Alterable Value AT of Mario < 行走最大速度( "Mario" )
+						Mario : Add 加速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+					+ Alterable Value AT of Mario > 行走最大速度( "Mario" )
+						Mario : Add 0 - 减速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+				+ Repeat while Player 1 Pressed fire 2
+
+					+ Alterable Value AT of Mario < 奔跑最大速度( "Mario" )
+						Mario : Add 加速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+					+ Alterable Value AT of Mario > 奔跑最大速度( "Mario" )
+						Mario : Add 0 - 减速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+			+ Mario is overlapping Group.Water
+
+				+ Alterable Value(100) of Mario = 0
+
+					+ Alterable Value AT of Mario < 水中行走速度( "Mario" )
+						Mario : Add 加速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+					+ Alterable Value AT of Mario > 水中行走速度( "Mario" )
+						Mario : Add 0 - 减速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+				+ Alterable Value(100) of Mario = 1
+
+					+ Alterable Value AT of Mario < 水中游泳速度( "Mario" )
+						Mario : Add 加速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+					+ Alterable Value AT of Mario > 水中游泳速度( "Mario" )
+						Mario : Add 0 - 减速度（百分之一）( "Mario" ) / 100.0 to Alterable Value AT
+
+		// 没有按键则减速
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AX of Mario = 0
+		+ Alterable Value AY of Mario = 0
+		+ Alterable Value AT of Mario > 0
+		+ Alterable Value AQ of Mario = 0
+			Mario : Sub 减速度（百分之一）( "Mario" ) / 100.0 from Alterable Value AT
+
+			+ Alterable Value AT of Mario < 0
+				Mario : Set Alterable Value AT to 0
+
+		// 滑蹲减速
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AT of Mario > 0
+		+ Alterable Value AQ of Mario = 1
+			Mario : Sub 减速度（百分之一）( "Mario" ) / 50.0 from Alterable Value AT
+
+			+ Alterable Value AT of Mario < 0
+				Mario : Set Alterable Value AT to 0
+
+		// 转向
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AX of Mario = 1
+		+ Alterable Value AY of Mario = 0
+		+ Alterable Value AS of Mario = 1
+		+ Alterable Value AQ of Mario = 0
+		  OR (logical)
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+		+ Alterable Value AX of Mario = 0
+		+ Alterable Value AY of Mario = 1
+		+ Alterable Value AS of Mario = -1
+		+ Alterable Value AQ of Mario = 0
+
+			+ Alterable Value AT of Mario > 行走最大速度( "Mario" )
+				Mario : Sub 减速度（奔跑转向）( "Mario" ) / 100.0 from Alterable Value AT
+
+			+ Alterable Value AT of Mario > 0
+			+ Alterable Value AT of Mario <= 行走最大速度( "Mario" )
+				Mario : Sub 减速度（行走转向）( "Mario" ) / 100.0 from Alterable Value AT
+
+			+ Alterable Value AT of Mario <= 0
+				Mario : Set Alterable Value AT to 0
+				Mario : Set Alterable Value AS to Alterable Value AS( "Mario" ) * -1
+
+		// 应用速度与方向
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(200) of Mario <> -1
+			Mario : Set Alterable Value(201) to 0
+			Mario : Set Alterable Value(202) to AltValN( "Mario", 102 ) + 90 * Alterable Value AS( "Mario" )
+			Mario : Set Alterable Value(201) to Max(0, ( Alterable Value AT( "Mario" ) - 1 ) / 8.0)
+
+		// 刷新动画判定
+
+		+ Alterable Value(204) of Mario = 1
+			Mario : Set Alterable Value(204) to 0
+
+	[ Jump & Swim ]
+
+		// AM: 有效跳跃按键
+		// AN: 连跳限制
+		// AO: 落水
+		// AC: 气泡计时
+
+		// 按键
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(100) of Mario <> -1
+		+ Alterable Value AN of Mario = 1
+		+ NOT Repeat while Player 1 Pressed fire 1
+			Mario : Set Alterable Value AN to 0
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(100) of Mario <> -1
+		+ Alterable Value AQ of Mario = 0
+		+ Repeat while Player 1 Pressed fire 1
+			Mario : Set Alterable Value AM to 0
+
+			+ Alterable Value(100) of Mario = 0
+			+ Alterable Value AN of Mario = 0
+				Mario : Set Alterable Value AM to 1
+
+			+ Alterable Value(100) of Mario = 1
+			+ Alterable Value AN of Mario = 0
+			+ Mario is overlapping Group.Water
+				Mario : Set Alterable Value AM to 1
+
+		// 跳跃
+
+		+ Alterable Value AM of Mario = 1
+		+ Alterable Value(100) of Mario <> -1
+			Mario : Set Alterable Value AM to 0
+			Mario : Set Alterable Value AN to 1
+
+			+ NOT Mario is overlapping Group.Water
+				Mario : Set Alterable Value(101) to 0 - 跳跃初速度( "Mario" ) - AltValN( "Mario", 103 )
+				Sound : Play sample mario_jump
+
+			+ Mario is overlapping Group.Water
+				Mario : Add 0 - 24 * Cos(AltValN( "Mario", 102 )) to Alterable Value X
+				Mario : Add 24 * Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+				Mario : Set X position to Alterable Value X( "Mario" )
+				Mario : Set Y position to Alterable Value Y( "Mario" )
+
+				+ Mario is overlapping Group.Water
+
+					+ Mario of Globalvar <> 8
+						Mario : Set Alterable Value(101) to 0 - 游泳初速度( "Mario" ) - AltValN( "Mario", 105 )
+						Sound : Play sample mario_swim
+
+				+ NOT Mario is overlapping Group.Water
+
+					+ Alterable Value(100) of Mario = 1
+						Mario : Set Alterable Value(101) to 0 - 跳出水初速度( "Mario" ) - AltValN( "Mario", 105 )
+						Sound : Play sample mario_swim
+
+					+ Alterable Value(100) of Mario = 0
+						Mario : Set Alterable Value(101) to 0 - 跳出水初速度（着地）( "Mario" ) - AltValN( "Mario", 105 )
+						Sound : Play sample mario_jump
+
+					+ Always
+						Sound : Play sample nsmbwiiSplashBubble1
+						New Objects : Create Water Spray at (0,12) from Mario
+						 Water Spray : Set angle to AltValN( "Mario", 102 ) + 90 (Quality = 1)
+
+				+ Always
+					Mario : Add 24 * Cos(AltValN( "Mario", 102 )) to Alterable Value X
+					Mario : Add 0 - 24 * Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+					Mario : Set X position to Alterable Value X( "Mario" )
+					Mario : Set Y position to Alterable Value Y( "Mario" )
+
+		// 落水与气泡
+
+		+ NOT Mario is overlapping Group.Water
+			Mario : Set Alterable Value AO to 0
+
+		+ Mario is overlapping Group.Water
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(100) of Mario <> -1
+		+ Alterable Value AO of Mario = 0
+			Mario : Set Alterable Value AO to 1
+
+			+ Alterable Value(101) of Mario > 0
+				Sound : Play sample nsmbwiiSplash
+				New Objects : Create Water Spray at (0,0) from Mario
+				 Water Spray : Set angle to AltValN( "Mario", 102 ) + 90 (Quality = 1)
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(100) of Mario <> -1
+		+ Mario is overlapping Group.Water
+			Mario : Add 1 to Alterable Value AC
+
+			+ Alterable Value AC of Mario >= 5
+				Mario : Set Alterable Value AC to 0
+
+				+ Random(10) = 9
+
+					+ Mario of Globalvar = 0
+						New Objects : Create Bubble at (0,-18) from Mario
+
+					+ Mario of Globalvar > 0
+						New Objects : Create Bubble at (0,-39) from Mario
+
+		// 跳跃高度控制
+
+		+ Alterable Value(1000) of Mario <> -1
+		+ Alterable Value(100) of Mario <> -1
+		+ Alterable Value(101) of Mario < 0
+		+ NOT Mario is overlapping Group.Water
+
+			+ Repeat while Player 1 Pressed fire 1
+
+				+ Mario of Globalvar <> 3
+
+					+ Alterable Value AT of Mario < 5
+						Mario : Sub 跳跃加成静止( "Mario" ) / 100.0 from Alterable Value(101)
+
+					+ Alterable Value AT of Mario >= 5
+						Mario : Sub 跳跃加成运动( "Mario" ) / 100.0 from Alterable Value(101)
+
+				+ Mario of Globalvar = 3
+					Mario : Sub 跳跃加成绿果( "Mario" ) / 100.0 from Alterable Value(101)
+
+	+ Run this event once
+		Special : Activate group "Jump & Swim"
+
+[ Prevent Crush ]
+
+	* On loop "movingblock_fix_end"
+	+ Alterable Value(1000) of Mario <> -1
+	+ Alterable Value AP of Mario <= 0
+
+		+ Alterable Value AQ of Mario = 2
+			Mario : Set Alterable Value AQ to 0
+
+			+ Mario is overlapping a backdrop
+			  OR (logical)
+			+ Mario is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Mario is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Mario", 1002 )
+				Mario : Set Alterable Value AQ to 2
+
+			+ Alterable Value AQ of Mario = 2
+
+				// 若能够往下卡出（吃补给变大导致顶天花板），则优先往下
+
+				+ Always
+					Mario : Add 28 * Cos(AltValN( "Mario", 102 )) to Alterable Value X
+					Mario : Add 0 - 28 * Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+					Mario : Set X position to Alterable Value X( "Mario" )
+					Mario : Set Y position to Alterable Value Y( "Mario" )
+					Mario : Set Alterable Value AQ to 3
+
+				+ Mario is overlapping a backdrop
+				  OR (logical)
+				+ Mario is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Mario is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Mario", 1002 )
+					Mario : Set Alterable Value AQ to 2
+
+				+ Always
+					Mario : Add 0 - 28 * Cos(AltValN( "Mario", 102 )) to Alterable Value X
+					Mario : Add 28 * Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+					Mario : Set X position to Alterable Value X( "Mario" )
+					Mario : Set Y position to Alterable Value Y( "Mario" )
+
+				+ Alterable Value AQ of Mario = 3
+					Mario : Set Alterable Value(100) to 1
+					Mario : Set Alterable Value(200) to 0
+					Mario : Set Alterable Value AQ to 0
+					Start loop for each one of Mario, loop name "gravity_up_detect"
+
+				// 否则进行常规卡出
+
+				+ Alterable Value AQ of Mario = 2
+					Mario : Set Alterable Value(100) to -1
+					Mario : Set Alterable Value(200) to -1
+					Mario : Set Alterable Value(101) to 0
+					Mario : Set Alterable Value(201) to 0
+					Mario : Set Alterable Value AT to 0
+					Mario : Set Alterable Value AQ to 3
+					Mario : Add 0 - 2 * Cos(AltValN( "Mario", 102 ) + 90 * Alterable Value AS( "Mario" )) to Alterable Value X
+					Mario : Add 2 * Sin(AltValN( "Mario", 102 ) + 90 * Alterable Value AS( "Mario" )) to Alterable Value Y
+					Mario : Set X position to Alterable Value X( "Mario" )
+					Mario : Set Y position to Alterable Value Y( "Mario" )
+
+					+ Mario is overlapping a backdrop
+					  OR (logical)
+					+ Mario is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = 0
+					  OR (logical)
+					+ Mario is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = AltValN( "Mario", 1002 )
+						Mario : Set Alterable Value AQ to 2
+
+					+ Alterable Value AQ of Mario = 3
+						Mario : Set Alterable Value AQ to 0
+						Mario : Set Alterable Value(100) to 0
+						Mario : Set Alterable Value(200) to 0
+
+			+ Alterable Value AQ of Mario = 0
+				Mario : Set Alterable Value(100) to 0
+				Mario : Set Alterable Value(200) to 0
+
+[ crouch down ]
+
+	// 下蹲
+	// AQ = 0: 正常
+	//       = 1: 蹲下
+	//       >= 2: 卡住
+
+	* Alterable Value(1000) of Mario <> -1
+	+ Alterable Value AQ of Mario <= 1
+
+		+ Always
+			Mario : Set Alterable Value AQ to 0
+
+		+ Mario of Globalvar > 0
+		+ Alterable Value(100) of Mario = 0
+		+ Alterable Value AP of Mario = 0
+
+			+ Repeat while Player 1 Moved down
+			+ Alterable Value AW of Mario >= 225
+			+ Alterable Value AW of Mario <= 315
+			  OR (logical)
+			+ Repeat while Player 1 Moved top
+			+ Alterable Value AW of Mario >= 45
+			+ Alterable Value AW of Mario <= 135
+			  OR (logical)
+			+ Repeat while Player 1 Moved right
+			+ Alterable Value AW of Mario >= 135
+			+ Alterable Value AW of Mario <= 225
+			  OR (logical)
+			+ Repeat while Player 1 Moved left
+			+ Alterable Value AW of Mario >= 315
+			  OR (logical)
+			+ Repeat while Player 1 Moved left
+			+ Alterable Value AW of Mario <= 45
+				Mario : Set Alterable Value AQ to 1
+
+[ instant ]
+
+	* On each one of Mario, loop name "mario_enable_walk"
+		Special : Activate group "Walk"
+
+	* On each one of Mario, loop name "mario_disable_walk"
+		Special : Deactivate group "Walk"
+
+	* On each one of Mario, loop name "mario_enable_jump"
+		Special : Activate group "Jump & Swim"
+
+	* On each one of Mario, loop name "mario_disable_jump"
+		Special : Deactivate group "Jump & Swim"
+
+	// 撞墙失速
+
+	* On each one of Mario, loop name "movable_place_finished"
+		Mario : Set Alterable Value(201) to 0
+		Mario : Set Alterable Value AT to 0
+
+	// 踩敌人（延迟判定防止踩多个敌人受伤）
+
+	* On each one of Mario, loop name "mario_stomp"
+		Mario : Set Alterable Value AE to 1
+
+	* On loop "frame_end"
+	+ Alterable Value AE of Mario = 1
+		Mario : Set Alterable Value AE to 0
+
+		+ NOT Repeat while Player 1 Pressed fire 1
+			Sound : Play sample mario_stomp
+			Mario : Set Alterable Value(101) to -9
+
+		+ Repeat while Player 1 Pressed fire 1
+			Sound : Play sample mario_stomp
+			Mario : Set Alterable Value(101) to -13
+
+	// 顶头音效
+
+	* On each one of Mario, loop name "gravity_up_finished"
+	+ Alterable Value AG of Mario = 0
+		Sound : Play sample mario_head
+
+	// 顶砖取消音效
+
+	* On each one of Mario, loop name "gravity_hit_block_up"
+		Mario : Set Alterable Value AG to 1
+		Sound : Stop sample mario_head
+
+	* On each one of Mario, loop name "gravity_hit_block_up_failed"
+		Mario : Set Alterable Value AG to 1
+		Sound : Stop sample mario_head
+
+	// 攻击
+
+	* Player 1 Pressed fire 2
+	+ Mario of Globalvar = 2
+	+ Alterable Value(1000) of Mario <> -1
+	+ Alterable Value AQ of Mario = 0
+	+ Alterable Value AP of Mario = 0
+	+ Number of Fireball Mario < 2
+		New Objects : Create Fireball Mario at (0,-28) from Mario
+		Fireball Mario : Set Alterable Value(100) to 1
+		Fireball Mario : Set Alterable Value(180) to AltValN( "Mario", 180 )
+		Fireball Mario : Set Alterable Value(202) to AltValN( "Mario", 202 )
+		Fireball Mario : Set Alterable Value AZ to Alterable Value AS( "Mario" )
+		Group.MarioAni : Change animation sequence to Launching
+		Sound : Play sample fireball
+
+	* Player 1 Pressed fire 2
+	+ Mario of Globalvar = 4
+	+ Alterable Value(1000) of Mario <> -1
+	+ Alterable Value AQ of Mario = 0
+	+ Alterable Value AP of Mario = 0
+	+ Number of Beet Mario < 2
+		New Objects : Create Beet Mario at (0,-28) from Mario
+		Beet Mario : Set Alterable Value(202) to AltValN( "Mario", 202 )
+		Beet Mario : Set Alterable Value(180) to AltValN( "Mario", 180 )
+		Beet Mario : Set Alterable Value(100) to 1
+		Group.MarioAni : Change animation sequence to Launching
+		Sound : Play sample fireball
+
+* Run this event once
+	Special : Activate group "crouch down"
+	Special : Activate group "instant"
+
+// 顶砖设置
+
+* Always
+	Mario : Set Alterable Value(690) to -1
+	Mario : Set Alterable Value AG to 0
+
+* Mario of Globalvar > 0
+	Mario : Set Alterable Value(690) to 0
+
+// 落水初始化
+
+* Start of Frame
++ Mario is overlapping Group.Water
+	Mario : Set Alterable Value AO to 1
+
+// 旋转判定
+
+* Alterable Value AP of Mario <= 0
+	 Mario : Set angle to AltValN( "Mario", 102 ) + 90 (Quality = 0)
+

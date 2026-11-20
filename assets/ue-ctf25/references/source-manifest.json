@@ -1,0 +1,125 @@
+[
+  {
+    "file": "original-code/mario-animation.json",
+    "source_filename": "mario-animation-events.json",
+    "sha256": "763c63a2b4b602310dce7b0dced53a8883e308c6967e59ddf29ae0e8588d656f",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/mario-animation-whole-behavior.json",
+    "source_filename": "mario-animation-original.json",
+    "sha256": "aa8f0f99f773fbd0e11a3248dbc326a7175ab666ee0a3561ecea7387c7da48ee",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/mario-movement.json",
+    "source_filename": "mario-movement-events.json",
+    "sha256": "d3fc81eb6685e67b10760ce0449680e3d94915bda58d90b5aafeeb45e88d3b5f",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/process-start.json",
+    "source_filename": "process-start-events.json",
+    "sha256": "2602607951c601ad44fa33c6fdaf6037687adb891ada6fddd22bed41efddd1eb",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/goomba-hurt-mario.json",
+    "source_filename": "goomba-hurt-mario.json",
+    "sha256": "5767b20b5b5a57c0e44e6e4754a102e88df4f14d9a3360a2fc9e3dbd9740dd30",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/goomba-init.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-40-57-067.json",
+    "sha256": "f35bc1e1bed06078bc420e4469576805bfd687aab3d2beeaa65fb82ed3040ea5",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/goomba-attacked.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-41-13-448.json",
+    "sha256": "2979006727a2184848282ad970b51a971df3e6c2882da89f9a45cf74b3bca33d",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/fly-troopa-blue-init.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-43-11-685.json",
+    "sha256": "ffb659d8aedaa01eed73797a20eabdb6d6fe66ee622b496ba4a58e022b8aced0",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/fly-troopa-blue-attacked.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-43-33-598.json",
+    "sha256": "2039b4f896a09d734384bf1cb3ba9328762ad9b55fe5d799525b1e8d3f3be9b1",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/fly-troopa-blue-stomp.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-46-25-340.json",
+    "sha256": "0b3058570e1f799cc2cbb9030627e6fb58ed9fee1fbba276414f9564e57785ff",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/lavaball-track-init.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-50-19-667.json",
+    "sha256": "817078c89c9b26c20a8b4895cf35bdae9da3a8694396065b417855319cd16d0b",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/lavaball-track-hurt-mario.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-51-14-700.json",
+    "sha256": "4b2baf80936e7d06f24032af0062257488b576e550189b62ddaf6b952cf9c86e",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/lavaball-track-animation.json",
+    "source_filename": "ctf-clipboard-2026-11-14_21-51-30-836.json",
+    "sha256": "1bded8bec86b3ae44d8e7c2dfcbe09cf5f94a38d5d883cd6d5c2420405e0f6e8",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/validated-mario-bw1.json",
+    "source_filename": "mario-bw-1.json",
+    "sha256": "8e98f6b202d561b27ed0a9d56d4302c30794b862f5f2fde784416bf428d71020",
+    "provenance": "original clipboard export, byte-for-byte copy"
+  },
+  {
+    "file": "original-code/mario-init.bin",
+    "source_filename": "ctf-events-original.bin",
+    "sha256": "a24191c7dcd32e1a0e0af5b7a522a8f23f2bf4d0fcb92e66d8d08c363b815b38",
+    "provenance": "original init clipboard payload or extracted text"
+  },
+  {
+    "file": "original-code/mario-init.txt",
+    "source_filename": "ctf-events-readable.txt",
+    "sha256": "051cae0e0954004307709288f930ecae5483848735290d88415d54509ca1cd57",
+    "provenance": "original init clipboard payload or extracted text"
+  },
+  {
+    "file": "original-code/frame-events-comment-conversation.txt",
+    "sha256": "53b2c6c1cb8224744c26a0dd2de6acefe4b49c6403955d2942caa8606cd252b9",
+    "provenance": "Recovered from the user message or full tool-returned event text in this conversation; whitespace normalized. Original clipboard binary unavailable."
+  },
+  {
+    "file": "original-code/mario-hurt-conversation.txt",
+    "sha256": "95f224d5c5b4dfb1c5622d08cfa6f4a5db47ad4c5f6b975e2c9736503500888d",
+    "provenance": "Recovered from the user message or full tool-returned event text in this conversation; whitespace normalized. Original clipboard binary unavailable."
+  },
+  {
+    "file": "original-code/process-end-conversation.txt",
+    "sha256": "c986619e37ef7abcfaa8f8ab43a05dcd68499d80eca96371ef05e9f04df82561",
+    "provenance": "Recovered from the user message or full tool-returned event text in this conversation; whitespace normalized. Original clipboard binary unavailable."
+  },
+  {
+    "file": "UE Manual.pdf",
+    "source_filename": "D:/Documents/manual/UE Manual.pdf",
+    "sha256": "0554f97581c978f79db7234772491a1161c4bacfe8632da0304bd459d252a866",
+    "provenance": "Original PDF byte-for-byte copy"
+  },
+  {
+    "file": "UE Manual-extracted.txt",
+    "source_filename": "work/manual.txt",
+    "sha256": "27edf5e8a974b0f6f3d2659045acce4db5f1f6574e7359c4136c72385345a393",
+    "provenance": "Previously extracted PDF text; may contain glyph artifacts"
+  }
+]

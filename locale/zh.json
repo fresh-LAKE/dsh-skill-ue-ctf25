@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "UE for Clickteam Fusion 2.5",
+    "description": "为 Clickteam Fusion 2.5 中的《超级马里奥 Ultra Edition》(UE) 事件开发与校验提供 ue-ctf25 技能。技能按需加载，内含 UE 手册及其提取文本、引擎 API 与对象模式说明、原始事件捕获、剪贴板桥接脚本和二进制事件校验器，适合 CTF 事件生成、审查或回读校验。插件本身不会修改 Fusion：生成的事件仍需在 Fusion 中粘贴并做运行时验证。",
+    "detail": "docs/DETAIL.zh.md"
+  }
+}

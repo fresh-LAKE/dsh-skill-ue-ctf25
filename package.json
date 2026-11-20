@@ -1,0 +1,27 @@
+{
+  "name": "@local/ue-ctf25-skill",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Super Mario Ultra Edition (Clickteam Fusion 2.5) event development skill for DeepSeek Harness",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.png"
+  },
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "locale/*.json",
+    "docs",
+    "assets",
+    "icon.png",
+    "README.md"
+  ],
+  "author": {
+    "name": "fresh_LAKE"
+  },
+  "dsh": {
+    "bundle": { "patch": "./cordis.patch.yml" }
+  }
+}

@@ -1,0 +1,41 @@
+// 优化版 Stomp API，支持任意重力方向
+// 
+// 注：
+// 1. 对于跳乌龟/库巴，即使成功踩中，也需要做一些延迟操作，否则下一帧还是会误判
+// 2. 移动桥/漩涡/大风等直接影响马里奥 Y 坐标的手段也可能造成误判
+// 
+// Argument:
+// 411: 踩踏高度
+// 
+// Return:
+// 410 = 1: 踩中
+//        = 0: 未踩中
+
+* On loop "frame_start"
+	Fly Troopa Blue : Set Alterable Value(490) to X( "Fly Troopa Blue" )
+	Fly Troopa Blue : Set Alterable Value(491) to Y( "Fly Troopa Blue" )
+
+* On each one of Fly Troopa Blue, loop name "stomp_detect"
+	Fly Troopa Blue : Set Alterable Value(410) to 0
+	Fly Troopa Blue : Set Alterable Value(492) to ( X( "Fly Troopa Blue" ) - AltValN( "Fly Troopa Blue", 490 ) ) * Cos(AltValN( "Mario", 102 )) - ( Y( "Fly Troopa Blue" ) - AltValN( "Fly Troopa Blue", 491 ) ) * Sin(AltValN( "Mario", 102 ))
+
+	+ Alterable Value(101) of Mario < AltValN( "Fly Troopa Blue", 492 )
+		 Special : Break
+
+	+ Always
+		Fly Troopa Blue : Add 0 - AltValN( "Fly Troopa Blue", 411 ) - AltValN( "Mario", 101 ) to Alterable Value(492)
+		Fly Troopa Blue : Set Alterable Value(410) to 1
+		Mario : Add AltValN( "Fly Troopa Blue", 492 ) * Cos(AltValN( "Mario", 102 )) to Alterable Value X
+		Mario : Add 0 - AltValN( "Fly Troopa Blue", 492 ) * Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+		Mario : Set X position to Alterable Value X( "Mario" )
+		Mario : Set Y position to Alterable Value Y( "Mario" )
+
+	+ Mario is overlapping Fly Troopa Blue
+		Fly Troopa Blue : Set Alterable Value(410) to 0
+
+	+ Always
+		Mario : Add 0 - AltValN( "Fly Troopa Blue", 492 ) * Cos(AltValN( "Mario", 102 )) to Alterable Value X
+		Mario : Add AltValN( "Fly Troopa Blue", 492 ) * Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+		Mario : Set X position to Alterable Value X( "Mario" )
+		Mario : Set Y position to Alterable Value Y( "Mario" )
+

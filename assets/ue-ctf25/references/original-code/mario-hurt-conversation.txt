@@ -1,0 +1,240 @@
+* Mario: 受伤 is on
+
+	+ Mario: 无敌 is off
+	+ Mario of Globalvar > 1
+		Globalvar : Set Mario to 1
+		 Mario : Set 无敌 on
+		 Mario : Set 受伤 off
+		Mario : Set Alterable Value AH to 1
+		Mario : Set Alterable Value AI to 0
+		Sound : Play sample mario_powerdown
+
+	+ Mario: 无敌 is off
+	+ Mario of Globalvar = 1
+		Globalvar : Set Mario to 0
+		 Mario : Set 无敌 on
+		 Mario : Set 受伤 off
+		Mario : Set Alterable Value AH to 1
+		Mario : Set Alterable Value AI to 0
+		Sound : Play sample mario_powerdown
+
+	+ Mario: 无敌 is off
+	+ Mario of Globalvar = 0
+		 Mario : Set 死亡 on
+
+// 摔死
+
+* On loop "frame_end"
++ Alterable Value(1000) of Mario <> -1
++ Alterable Value AP of Mario = 0
+
+	+ Y position of Mario > Y Bottom Frame + 48
+	+ Alterable Value AW of Mario >= 225
+	+ Alterable Value AW of Mario < 315
+		 Mario : Set 死亡 on
+
+	+ Y position of Mario < Y Top Frame - 48
+	+ Alterable Value AW of Mario >= 45
+	+ Alterable Value AW of Mario < 135
+		 Mario : Set 死亡 on
+
+	+ X position of Mario < X Left Frame - 48
+	+ Alterable Value AW of Mario >= 135
+	+ Alterable Value AW of Mario < 225
+		 Mario : Set 死亡 on
+
+	+ X position of Mario > X Right Frame + 48
+	+ Alterable Value AW of Mario >= 315
+	  OR (logical)
+	+ X position of Mario > X Right Frame + 48
+	+ Alterable Value AW of Mario < 45
+		 Mario : Set 死亡 on
+
+// 挤死
+
+* Alterable Value(1004) of Mario = 1
++ Alterable Value AP of Mario = 0
+	 Mario : Set 死亡 on
+
+// AH = 1: 受伤无敌
+//       = 2: 无敌星无敌
+//       = 3: 通关无敌
+// AI: 计时用
+// AR: 特效随机值
+
+* Mario: 无敌 is on
++ Alterable Value(1000) of Mario <> -1
++ Alterable Value AP of Mario = 0
+
+	+ Alterable Value AH of Mario < 0
+		Mario : Set Alterable Value AH to Alterable Value AH( "Mario" ) * -1
+
+	+ Alterable Value AH of Mario = 0
+		Mario : Set Alterable Value AH to 0
+		 Mario : Set 无敌 off
+		Group.MarioAni : Reappear
+
+	+ Alterable Value AH of Mario = 1
+		Mario : Add 1 to Alterable Value AI
+
+		+ Every 00''-03
+			Group.MarioAni : Flash during 00''-01
+
+		+ Alterable Value AI of Mario >= 受伤无敌时间( "Mario" )
+			Mario : Set Alterable Value AI to 0
+			Mario : Set Alterable Value AH to 0
+			 Mario : Set 无敌 off
+			Group.MarioAni : Reappear
+
+	+ Alterable Value AH of Mario = 2
+		Mario : Add 1 to Alterable Value AI
+		Mario : Set Alterable Value AR to Random(6)
+		Group.MarioAni : Reappear
+		 Sound : Pause channel #48
+
+		+ 025 - Kenta Nagata - Starman is not playing
+			 Sound : Play sample 025 - Kenta Nagata - Starman on channel #47, 0 times
+
+		+ Alterable Value AI of Mario = 350
+			Sound : Play sample nsmbwiiStarmanRunningOut
+
+		+ Alterable Value AI of Mario >= 400
+			Audio : Add -1 to Alterable Value(47)
+
+		+ Alterable Value AI of Mario >= 500
+			Mario : Set Alterable Value AI to 0
+			Mario : Set Alterable Value AH to 0
+			 Mario : Set 无敌 off
+			Audio : Set Alterable Value(47) to 100
+			 Sound : Stop channel #47
+			 Sound : Resume channel #48
+
+
+		// 特效
+
+		+ Mario of Globalvar = 0
+
+			+ Alterable Value AR of Mario = 0
+				New Objects : Create Star Red at (0,0) from Mario
+				Star Red : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Red : Set Y position to Y( "Mario" ) - 4 - Random(25)
+				Star Red : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Red : Set Alterable Value B to Random(15) + 5
+				 Star Red : Set angle to Random(360) (Quality = 1)
+				 Star Red : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 1
+				New Objects : Create Star Green at (0,0) from Mario
+				Star Green : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Green : Set Y position to Y( "Mario" ) - 4 - Random(25)
+				Star Green : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Green : Set Alterable Value B to Random(15) + 5
+				 Star Green : Set angle to Random(360) (Quality = 1)
+				 Star Green : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 2
+				New Objects : Create Star Indigo at (0,0) from Mario
+				Star Indigo : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Indigo : Set Y position to Y( "Mario" ) - 4 - Random(25)
+				Star Indigo : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Indigo : Set Alterable Value B to Random(15) + 5
+				 Star Indigo : Set angle to Random(360) (Quality = 1)
+				 Star Indigo : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 3
+				New Objects : Create Star Purple at (0,0) from Mario
+				Star Purple : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Purple : Set Y position to Y( "Mario" ) - 4 - Random(25)
+				Star Purple : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Purple : Set Alterable Value B to Random(15) + 5
+				 Star Purple : Set angle to Random(360) (Quality = 1)
+				 Star Purple : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 4
+				New Objects : Create Star Blue at (0,0) from Mario
+				Star Blue : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Blue : Set Y position to Y( "Mario" ) - 4 - Random(25)
+				Star Blue : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Blue : Set Alterable Value B to Random(15) + 5
+				 Star Blue : Set angle to Random(360) (Quality = 1)
+				 Star Blue : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 5
+				New Objects : Create Star Yellow at (0,0) from Mario
+				Star Yellow : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Yellow : Set Y position to Y( "Mario" ) - 4 - Random(25)
+				Star Yellow : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Yellow : Set Alterable Value B to Random(15) + 5
+				 Star Yellow : Set angle to Random(360) (Quality = 1)
+				 Star Yellow : Set alpha-blending coefficient to 100
+
+		+ Mario of Globalvar > 0
+
+			+ Alterable Value AR of Mario = 0
+				New Objects : Create Star Red at (0,0) from Mario
+				Star Red : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Red : Set Y position to Y( "Mario" ) - 4 - Random(56)
+				Star Red : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Red : Set Alterable Value B to Random(15) + 5
+				 Star Red : Set angle to Random(360) (Quality = 1)
+				 Star Red : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 1
+				New Objects : Create Star Green at (0,0) from Mario
+				Star Green : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Green : Set Y position to Y( "Mario" ) - 4 - Random(56)
+				Star Green : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Green : Set Alterable Value B to Random(15) + 5
+				 Star Green : Set angle to Random(360) (Quality = 1)
+				 Star Green : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 2
+				New Objects : Create Star Indigo at (0,0) from Mario
+				Star Indigo : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Indigo : Set Y position to Y( "Mario" ) - 4 - Random(56)
+				Star Indigo : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Indigo : Set Alterable Value B to Random(15) + 5
+				 Star Indigo : Set angle to Random(360) (Quality = 1)
+				 Star Indigo : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 3
+				New Objects : Create Star Purple at (0,0) from Mario
+				Star Purple : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Purple : Set Y position to Y( "Mario" ) - 4 - Random(56)
+				Star Purple : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Purple : Set Alterable Value B to Random(15) + 5
+				 Star Purple : Set angle to Random(360) (Quality = 1)
+				 Star Purple : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 4
+				New Objects : Create Star Blue at (0,0) from Mario
+				Star Blue : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Blue : Set Y position to Y( "Mario" ) - 4 - Random(56)
+				Star Blue : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Blue : Set Alterable Value B to Random(15) + 5
+				 Star Blue : Set angle to Random(360) (Quality = 1)
+				 Star Blue : Set alpha-blending coefficient to 100
+
+			+ Alterable Value AR of Mario = 5
+				New Objects : Create Star Yellow at (0,0) from Mario
+				Star Yellow : Set X position to X( "Mario" ) - 13 + Random(28)
+				Star Yellow : Set Y position to Y( "Mario" ) - 4 - Random(56)
+				Star Yellow : Set Alterable Value A to ( Random(10) + 1 ) / 100.0
+				Star Yellow : Set Alterable Value B to Random(15) + 5
+				 Star Yellow : Set angle to Random(360) (Quality = 1)
+				 Star Yellow : Set alpha-blending coefficient to 100
+
+// 死亡
+
+* Mario: 死亡 is on
+
+	+ Alterable Value AH of Mario = 2
+		 Sound : Stop channel #47
+		 Sound : Resume channel #48
+
+	+ Always
+		New Objects : Create Mario Death at (0,0) from Mario
+		Mario Death : Set Alterable Value(102) to AltValN( "Mario", 102 )
+		Mario : Destroy
+		Group.MarioAni : Destroy
+		Sound : Play sample nsmbwiiDeath

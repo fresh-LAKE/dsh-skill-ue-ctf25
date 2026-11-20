@@ -1,0 +1,34 @@
+* Alterable Value(400) of Goomba = 1
+	New Objects : Create Goomba Death at (0,0) from Goomba
+	Goomba : Destroy
+
+* Alterable Value(101) of Mario >= 0
++ Mario is overlapping Goomba
++ Y position of Goomba >= Y( "Mario" ) + 16
+	Start loop for each one of Mario, loop name "mario_stomp"
+	New Objects : Create Score 100 at (0,0) from Goomba
+	Start loop for each one of Goomba, loop name "enemy_death"
+
+* On each one of Goomba, loop name "enemy_death"
+	New Objects : Create Goomba Death 2 at (0,0) from Goomba
+	Goomba Death 2 : Set Alterable Value X to X( "Goomba Death 2" )
+	Goomba Death 2 : Set Alterable Value Y to Y( "Goomba Death 2" )
+	Goomba Death 2 : Set Alterable Value(1000) to 1
+	Start loop for each one of Goomba Death 2, loop name "init"
+	Goomba : Destroy
+
+* Fireball Mario is overlapping Goomba
+	Fireball Mario : Set Alterable Value(204) to 1
+	New Objects : Create Score 100 at (0,0) from Goomba
+	New Objects : Create Goomba Death at (0,0) from Goomba
+	Goomba : Destroy
+	Sound : Play sample kick_2
+
+* Alterable Value A of Beet Mario < 3
++ Beet Mario is overlapping Goomba
+	Beet Mario : Set Alterable Value(204) to 1
+	New Objects : Create Score 100 at (0,0) from Goomba
+	New Objects : Create Goomba Death at (0,0) from Goomba
+	Goomba : Destroy
+	Sound : Play sample kick_2
+

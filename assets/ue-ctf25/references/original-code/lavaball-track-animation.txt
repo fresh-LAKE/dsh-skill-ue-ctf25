@@ -1,0 +1,58 @@
+* On loop "frame_end"
+	Start loop for each one of Lavaball on track, loop name "turning"
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value O of Lavaball on track = 0
+	New Objects : Create Lavaball Animation at (0,0) from Lavaball on track
+	Lavaball Animation : Set Alterable Value F to Fixed( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value O to 1
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
+	Lavaball Animation : Set X position to X( "Lavaball on track" ) + 16
+	Lavaball Animation : Set Y position to Y( "Lavaball on track" ) + 16
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ Lavaball Animation: Flag 21 is off
+	 Lavaball Animation : Set angle to OAngle( "Lavaball on track", X( "Lavaball on track" ) + AltValN( "Lavaball on track", 311 ), Y( "Lavaball on track" ) + AltValN( "Lavaball on track", 312 ) ) (Quality = 1)
+	 Lavaball Animation : Set Flag 21 on
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value U to Angle( "Lavaball Animation" )
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
+	Lavaball on track : Set Alterable Value V to OAngle( "Lavaball on track", X( "Lavaball on track" ) + AltValN( "Lavaball on track", 311 ), Y( "Lavaball on track" ) + AltValN( "Lavaball on track", 312 ) )
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ Angle of Lavaball Animation > 180
+	Lavaball on track : Set Alterable Value U to Angle( "Lavaball Animation" ) - 360
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ OAngle( "Lavaball on track", X( "Lavaball on track" ) + AltValN( "Lavaball on track", 311 ), Y( "Lavaball on track" ) + AltValN( "Lavaball on track", 312 ) ) > 180
+	Lavaball on track : Set Alterable Value V to OAngle( "Lavaball on track", X( "Lavaball on track" ) + AltValN( "Lavaball on track", 311 ), Y( "Lavaball on track" ) + AltValN( "Lavaball on track", 312 ) ) - 360
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ Abs(Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" )) = 180
+	 Lavaball Animation : Set angle to Angle( "Lavaball Animation" ) - 15 (Quality = 1)
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ Abs(Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" )) < 180
+	 Lavaball Animation : Set angle to Angle( "Lavaball Animation" ) + 15 * ( ( Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" ) ) / Abs(Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" )) ) (Quality = 1)
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ Abs(Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" )) > 180
+	 Lavaball Animation : Set angle to Angle( "Lavaball Animation" ) - 15 * ( ( Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" ) ) / Abs(Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" )) ) (Quality = 1)
+
+* On each one of Lavaball on track, loop name "turning"
++ Alterable Value F of Lavaball Animation = Fixed( "Lavaball on track" )
++ Alterable Value V( "Lavaball on track" ) - Alterable Value U( "Lavaball on track" ) = 0
+	 Lavaball Animation : Set angle to OAngle( "Lavaball on track", X( "Lavaball on track" ) + AltValN( "Lavaball on track", 311 ), Y( "Lavaball on track" ) + AltValN( "Lavaball on track", 312 ) ) (Quality = 1)
+

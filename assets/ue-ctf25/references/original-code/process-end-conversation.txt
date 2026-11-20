@@ -1,0 +1,182 @@
+[ End Frame Event ]
+
+	// 防止部分 Instance 由于 Create 不规范尚未初始化
+
+	* On loop "frame_end"
+	+ Alterable Value(1000) of Group.Instance = 0
+		Group.Instance : Set Alterable Value X to X( "Group.Instance" )
+		Group.Instance : Set Alterable Value Y to Y( "Group.Instance" )
+		Group.Instance : Set Alterable Value(1000) to 1
+		Start loop for each one of Group.Instance, loop name "init"
+
+	[ MovingBlock Stand Fix ]
+
+		// 30000: 踩上的重力对象总数
+		// 30000+: 踩上的重力对象 Fix 值
+		//
+		// -----以下是补正相关临时变量-----
+		//
+		// --Group.MovingBlock--
+		//
+		// 351: 旋转补正 X
+		// 352: 旋转补正 Y
+		// 353: 旋转角度
+		// 354: 补正 x 速度
+		// 355: 补正 y 速度
+		// 359: 记录图层
+		// 360: 用于筛选
+		//
+		// --Group.Instance & Gravity--
+		//
+		// 351: 初始x坐标
+		// 352: 初始y坐标
+		// 353: 新x坐标
+		// 354: 新y坐标
+		//
+		// 356: Push 是否成功
+		// 357: 补正最大值与方向
+		// 358: Push 筛选
+		// 359: 踩上补正筛选
+		// 360: 用于筛选
+		// 371: 左累积 x 速度
+		// 372: 右累积 x 速度
+		// 373: 上累积 y 速度
+		// 374: 下累积 y 速度
+		// 375: 补正 x 速度
+		// 376: 补正 y 速度
+
+		* On loop "frame_end"
+
+			+ Always
+				Group.Gravity : Set Alterable Value(371) to 0
+				Group.Gravity : Set Alterable Value(372) to 0
+				Group.Gravity : Set Alterable Value(373) to 0
+				Group.Gravity : Set Alterable Value(374) to 0
+				Group.Instance : Set Alterable Value(351) to X( "Group.Instance" )
+				Group.Instance : Set Alterable Value(352) to Y( "Group.Instance" )
+
+			+ Alterable Value(326) of Group.MovingBlock = 0
+			+ Alterable Value(1013) of Group.MovingBlock = 1
+			+ Alterable Value(1019) of Group.MovingBlock > 0
+			+ Alterable Value(900) of Group.MovingBlock >= 0
+			+ Alterable Value(301) of Group.MovingBlock >= 0
+				Group.MovingBlock : Set Alterable Value(323) to Angle( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(324) to X( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(325) to Y( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(359) to Layer( "Group.MovingBlock" )
+				Start loop for each one of Group.MovingBlock, loop name "movingblock_stand_fix"
+
+			+ Always
+				Group.Gravity : Set Alterable Value(375) to AltValN( "Group.Gravity", 371 ) + AltValN( "Group.Gravity", 372 )
+				Group.Gravity : Set Alterable Value(376) to AltValN( "Group.Gravity", 373 ) + AltValN( "Group.Gravity", 374 )
+				Group.Gravity : Add AltValN( "Group.Gravity", 375 ) to Alterable Value X
+				Group.Gravity : Add AltValN( "Group.Gravity", 376 ) to Alterable Value Y
+				Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+				Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+		* On each one of Group.MovingBlock, loop name "movingblock_stand_fix"
+
+			+ Always
+				Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 321 )
+				Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 322 )
+				 Group.MovingBlock : Set angle to AltValN( "Group.MovingBlock", 320 ) (Quality = 0)
+
+			+ Always
+				Group.MovingBlock : Set Alterable Value(360) to 2
+				Special : Start loop "movingblock_fix_stand_list" AltValN( "Group.MovingBlock", 30000 ) times
+
+			+ Always
+				Group.MovingBlock : Set Alterable Value(360) to 0
+				Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 324 )
+				Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 325 )
+				 Group.MovingBlock : Set angle to AltValN( "Group.MovingBlock", 323 ) (Quality = 0)
+
+		* On loop "movingblock_fix_stand_list"
+		+ Alterable Value(360) of Group.MovingBlock = 2
+			Group.MovingBlock : Set Alterable Value(361) to LoopIndex("movingblock_fix_stand_list") + 1
+			Start loop for each one of Group.MovingBlock, loop name "movingblock_fix_stand_list_gravity"
+
+		* On each one of Group.MovingBlock, loop name "movingblock_fix_stand_list_gravity"
+
+			+ Fixed value of Group.Gravity = AltValN( "Group.MovingBlock", 30000 + AltValN( "Group.MovingBlock", 361 ) )
+				Group.Gravity : Set Alterable Value(359) to 1
+				Start loop for each one of Group.MovingBlock, loop name "movingblock_accumulate_velocity_to_gravity"
+
+	[ Bouncing Animation ]
+
+		// Bouncing 自定义动画
+
+		* On loop "frame_end"
+
+			+ Alterable Value(1000) of Group.Instance <> -1
+			+ Alterable Value(3000) of Group.Instance = 1
+				Group.Instance : Set Alterable Value(3003) to Anim Number( "Group.Instance" )
+				Group.Instance : Set Alterable Value(3004) to Image( "Group.Instance" )
+				Group.Instance : Change animation sequence to Bouncing
+
+			+ Alterable Value(1000) of Group.Instance <> -1
+			+ Alterable Value(3000) of Group.Instance = 1
+				Group.Instance : Change animation sequence to AltValN( "Group.Instance", 3003 )
+				Group.Instance : Force animation frame to AltValN( "Group.Instance", 3004 )
+				Group.Instance : Change speed of animation to 0
+				Group.Instance : Add 1 to Alterable Value(3005)
+				Start loop for each one of Group.Instance, loop name "instance_animation"
+
+		* On each one of Group.Instance, loop name "instance_animation"
+		+ Alterable Value(3005) of Group.Instance >= AltValN( "Group.Instance", 3001 )
+			Group.Instance : Set Alterable Value(3005) to 0
+
+			+ Current frame of Group.Instance < AltValN( "Group.Instance", 3002 ) - 1
+				Group.Instance : Force animation frame to Image( "Group.Instance" ) + 1
+				 Special : Break
+
+			+ Current frame of Group.Instance = AltValN( "Group.Instance", 3002 ) - 1
+				Group.Instance : Force animation frame to 0
+				 Special : Break
+
+	* On loop "frame_end"
+
+		// 滚屏调用
+
+		+ Always
+			Special : Start loop "camera" 1 times
+
+		// 调整图层
+
+		+ Alterable Value(1005) of Group.Instance = 1
+			 Group.Instance : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		+ Alterable Value(901) of Group.Solid = 1
+			 Group.Solid : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		+ Alterable Value(901) of Group.Platform = 1
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		+ Alterable Value(403) of Group.Enemy = 1
+			 Group.Enemy : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		+ Alterable Value(403) of Group.Shell = 1
+			 Group.Shell : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		+ Alterable Value(403) of Group.HardShell = 1
+			 Group.HardShell : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		+ Alterable Value(650) of Group.PowerUp = 1
+			 Group.PowerUp : Move to layer lyrGetLayerIndex( "Layer object", "level_back" )
+
+		// 开场圈圈特效
+
+		+ Run this event once
+			Circle : Set X position to X( "Mario" )
+			Circle : Set Y position to ( Y Top( "Mario" ) + Y Bottom( "Mario" ) ) / 2
+			Transition Setting : Set Alterable Value Z to -1
+
+			+ Number of Mario = 0
+				Circle : Set position at (0,-16) from Mario Death
+
+		// 校正马里奥动画位置
+
+		+ Always
+			Group.MarioAni : Set position at (0,0) from Mario
+			 Group.MarioAni : Set angle to Angle( "Mario" ) (Quality = 1)
+			Group.MarioAni : Set direction to 8 * ( 1 - Alterable Value AS( "Mario" ) )

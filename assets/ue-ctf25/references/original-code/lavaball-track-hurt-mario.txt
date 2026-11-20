@@ -1,0 +1,6 @@
+* Alterable Value(1000) of Lavaball on track <> -1
++ Lavaball on track is overlapping Mario
++ Alterable Value(1000) of Mario <> -1
++ Mario: 无敌 is off
+	 Mario : Set 受伤 on
+

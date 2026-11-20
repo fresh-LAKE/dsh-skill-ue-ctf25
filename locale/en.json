@@ -1,0 +1,7 @@
+{
+  "meta": {
+    "title": "UE for Clickteam Fusion 2.5",
+    "description": "Adds the ue-ctf25 skill for developing and verifying Super Mario Ultra Edition (UE) events in Clickteam Fusion 2.5. The skill loads on demand and ships the UE manual and its extracted text, engine API and object-pattern notes, the original event captures, the clipboard bridge script, and the binary event verifier. Use it for CTF event generation, review, or readback checks. The plugin never edits Fusion itself: generated events still need their own paste and runtime verification there.",
+    "detail": "docs/DETAIL.md"
+  }
+}

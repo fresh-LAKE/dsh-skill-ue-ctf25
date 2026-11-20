@@ -1,0 +1,49 @@
+* On each one of Mario, loop name "init"
+
+	// 碰撞检测类型
+
+	+ Always
+		Mario : Set Alterable Value(1002) to 1
+
+	// 重力默认设置
+
+	+ Always
+		Mario : Set Alterable Value(102) to 重力方向( "Gravity Default Settings" )
+		Mario : Set Alterable Value(103) to 空中加速度（百分之一）( "Gravity Default Settings" ) / 100.0
+		Mario : Set Alterable Value(104) to 空中减速度（百分之一）( "Gravity Default Settings" ) / 100.0
+		Mario : Set Alterable Value(105) to 水中加速度（百分之一）( "Gravity Default Settings" ) / 100.0
+		Mario : Set Alterable Value(106) to 水中减速度（百分之一）( "Gravity Default Settings" ) / 100.0
+		Mario : Set Alterable Value(107) to 空中最大速度( "Gravity Default Settings" )
+		Mario : Set Alterable Value(108) to 水中最大速度( "Gravity Default Settings" )
+
+	// 移动默认设置
+
+	+ Always
+		Mario : Set Alterable Value(201) to 0
+		Mario : Set Alterable Value(202) to AltValN( "Mario", 102 ) + 90
+		Mario : Set Alterable Value AS to 1
+		Mario : Set Alterable Value(203) to 2
+		Mario : Set Alterable Value(205) to 6
+
+	// 顶砖设置
+
+	+ Always
+		Mario : Set Alterable Value(699) to 1
+		Mario : Set Alterable Value(692) to 1
+
+// 获取重力方向
+
+* Always
+	Mario : Set Alterable Value AW to AltValN( "Mario", 102 ) mod 360
+
+* Alterable Value AW of Mario < 0
+	Special : Start loop "mario_gravity_dir_get" -1 times
+
+* On loop "mario_gravity_dir_get"
+	Mario : Add 360 to Alterable Value AW
+
+* On loop "mario_gravity_dir_get"
++ Alterable Value AW of Mario >= 0
+	Special : Stop loop "mario_gravity_dir_get"
+
+

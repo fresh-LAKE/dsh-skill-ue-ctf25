@@ -1,0 +1,3363 @@
+[ Pause ]
+
+	// 禁用事件
+
+	* Pause: Pause is on
+	+ Alterable Value(2001) of Group.Instance = 0
+	+ NOT Group.Instance is stopped
+		Group.Instance : Set Alterable Value(2001) to 1
+
+	* Pause: Pause is on
+	+ Alterable Value(2000) of Group.Instance = 0
+		Group.Instance : Set Alterable Value(2000) to 1
+		Group.Instance : Stop animation
+		Group.Instance : Stop
+
+		+ Alterable Value(1000) of Group.Instance <> -1
+			Group.Instance : Set Alterable Value(1000) to -1
+			Group.Instance : Set Alterable Value(2002) to 1
+
+	* Pause: Pause is off
+	+ Alterable Value(2000) of Group.Instance = 1
+		Group.Instance : Set Alterable Value(2000) to 0
+		Group.Instance : Start animation
+
+		+ Alterable Value(2002) of Group.Instance = 1
+			Group.Instance : Set Alterable Value(1000) to 2
+			Group.Instance : Set Alterable Value(2002) to 0
+
+	* Pause: Pause is off
+	+ Alterable Value(2001) of Group.Instance = 1
+		Group.Instance : Set Alterable Value(2001) to 0
+		Group.Instance : Start
+
+[ Start Frame Event ]
+
+	* Pause: Pause is off
+		Special : Start loop "frame_start" 1 times
+
+	* On loop "select_all"
+		Player 1 : Set player name to ""
+
+	// Bouncing 动画碰撞箱
+	// 3000 = 1: 开启
+	// 3001: 动画切换间隔
+	// 3002: 动画帧数
+	// 3003: 当前动画序列
+	// 3004: 当前动画帧
+
+	* Alterable Value(1000) of Group.Instance <> -1
+	+ Alterable Value(3000) of Group.Instance = 1
+		Group.Instance : Set Alterable Value(3003) to Anim Number( "Group.Instance" )
+		Group.Instance : Set Alterable Value(3004) to Image( "Group.Instance" )
+		Group.Instance : Change animation sequence to Bouncing
+
+	// 调整图层
+
+	* Pause: Pause is off
+
+		+ Alterable Value(1005) of Group.Instance = 1
+			 Group.Instance : Move to layer lyrGetLayerIndex( "Layer object", "level_main" )
+
+		+ Alterable Value(901) of Group.Solid = 1
+			 Group.Solid : Move to layer lyrGetLayerIndex( "Layer object", "level_main" )
+
+		+ Alterable Value(901) of Group.Platform = 1
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "level_main" )
+
+		+ Alterable Value(403) of Group.Enemy = 1
+			 Group.Enemy : Move to layer lyrGetLayerIndex( "Layer object", "level_main" )
+
+		+ Alterable Value(403) of Group.Shell = 1
+			 Group.Shell : Move to layer lyrGetLayerIndex( "Layer object", "level_main" )
+
+		+ Alterable Value(403) of Group.HardShell = 1
+			 Group.HardShell : Move to layer lyrGetLayerIndex( "Layer object", "level_main" )
+
+		+ Alterable Value(650) of Group.PowerUp = 1
+			 Group.PowerUp : Move to layer AltValN( "Group.PowerUp", 662 )
+
+[ Group Events ]
+
+	[ Group.MovingBlock(var 300 & 30000) ]
+
+		[ Foreach Function(Group.MovingBlock) ]
+
+			[ Private ]
+
+				// 以下 Foreach 均为选择物件而使用，不作特殊说明
+
+				* On each one of Group.MovingBlock, loop name "movingblock_step_mario"
+
+					+ NOT Mario is overlapping Group.MovingBlock
+						Group.MovingBlock : Set Alterable Value(350) to 1
+
+					+ Always
+						Mario : Add Cos(AltValN( "Mario", 102 )) to Alterable Value X
+						Mario : Add 0 - Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+
+				* On each one of Group.MovingBlock, loop name "movingblock_step_gravity"
+
+					+ Alterable Value(398) of Group.Gravity = 1
+					+ NOT Group.Gravity is overlapping Group.MovingBlock
+						Group.MovingBlock : Set Alterable Value(350) to 1
+
+					+ Alterable Value(398) of Group.Gravity = 1
+						Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+						Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+						Group.Gravity : Set Alterable Value(398) to 0
+
+				// * On each one of Group.Gravity, loop name "gravity_movingblock_fix_x"
+					//  Group.MovingBlock : Move to layer AltValN( "Group.MovingBlock", 320 )
+					// Group.Gravity : Add AltValN( "Group.Gravity", 363 ) to Alterable Value X
+					// Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					// Group.Gravity : Set Alterable Value(1098) to AltValN( "Group.Gravity", 1002 )
+					// Group.Gravity : Set Alterable Value(1096) to 1
+					// Group.Gravity : Set Alterable Value(1093) to 1
+					// Group.Gravity : Set Alterable Value(1095) to 0
+
+					// + Alterable Value(363) of Group.Gravity > 0
+						// Group.Gravity : Set Alterable Value(1095) to 180
+
+					// + Alterable Value(360) of Group.Gravity > 0
+						// Group.Gravity : Set Alterable Value(365) to 1
+						// Special : Start loop "gravity_movingblock_fix_check" AltValN( "Group.Gravity", 360 ) times
+
+					// + Always
+						// Start loop for each one of Group.Gravity, loop name "instance_place_fix"
+
+					// + Alterable Value(1099) of Group.Gravity = 1
+						// Group.Gravity : Set Alterable Value(1099) to 0
+
+					// + Always
+						// Group.Gravity : Set Alterable Value(365) to 0
+
+				// * On each one of Group.Gravity, loop name "gravity_movingblock_fix_y"
+					//  Group.MovingBlock : Move to layer AltValN( "Group.MovingBlock", 320 )
+					// Group.Gravity : Add AltValN( "Group.Gravity", 364 ) to Alterable Value Y
+					// Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+					// Group.Gravity : Set Alterable Value(1098) to AltValN( "Group.Gravity", 1002 )
+					// Group.Gravity : Set Alterable Value(1096) to 1
+					// Group.Gravity : Set Alterable Value(1093) to 1
+					// Group.Gravity : Set Alterable Value(1095) to 270
+
+					// + Alterable Value(364) of Group.Gravity > 0
+						// Group.Gravity : Set Alterable Value(1095) to 90
+
+					// + Alterable Value(360) of Group.Gravity > 0
+						// Group.Gravity : Set Alterable Value(365) to 1
+						// Special : Start loop "gravity_movingblock_fix_check" AltValN( "Group.Gravity", 360 ) times
+
+					// + Always
+						// Start loop for each one of Group.Gravity, loop name "instance_place_fix"
+
+					// + Alterable Value(1099) of Group.Gravity = 1
+						// Group.Gravity : Set Alterable Value(1099) to 0
+
+					// + Always
+						// Group.Gravity : Set Alterable Value(365) to 0
+
+				// * On loop "gravity_movingblock_fix_check"
+				// + Alterable Value(365) of Group.Gravity = 1
+				// + Fixed value of Group.MovingBlock = AltValN( "Group.Gravity", 360 - 1 - LoopIndex("gravity_movingblock_fix_check") )
+					//  Group.MovingBlock : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				// // 实心补正
+
+				// * On each one of Group.MovingBlock, loop name "movingblock_place_fix_push"
+
+					// + Alterable Value(323) of Group.MovingBlock <> 0
+					// + Alterable Value(1019) of Group.MovingBlock = 1
+					// + Alterable Value(900) of Group.MovingBlock = 0
+					// + Alterable Value(1002) of Group.Instance <> -1
+					// + Alterable Value(1000) of Group.Instance <> -1
+					//   OR (logical)
+					// + Alterable Value(323) of Group.MovingBlock <> 0
+					// + Alterable Value(1019) of Group.MovingBlock = 1
+					// + Alterable Value(900) of Group.MovingBlock > 0
+					// + Alterable Value(1002) of Group.Instance = AltValN( "Group.MovingBlock", 900 )
+					// + Alterable Value(1000) of Group.Instance <> -1
+						// Group.Instance : Set X position to X( "Group.Instance" ) - AltValN( "Group.MovingBlock", 323 )
+						// Group.MovingBlock : Set Alterable Value(399) to 0
+
+						// + Group.Instance is overlapping Group.MovingBlock
+
+							// + Always
+								// Group.MovingBlock : Set Alterable Value(399) to 1
+								// Start loop for each one of Group.Instance, loop name "instance_movingblock_place_fix_x"
+
+							// + Always
+								// Group.MovingBlock : Set Alterable Value(399) to 0
+
+						// + Always
+							// Group.Instance : Set X position to Alterable Value X( "Group.Instance" )
+
+					// + Alterable Value(324) of Group.MovingBlock <> 0
+					// + Alterable Value(1019) of Group.MovingBlock = 1
+					// + Alterable Value(900) of Group.MovingBlock = 0
+					// + Alterable Value(1002) of Group.Instance <> -1
+					// + Alterable Value(1000) of Group.Instance <> -1
+					//   OR (logical)
+					// + Alterable Value(324) of Group.MovingBlock <> 0
+					// + Alterable Value(1019) of Group.MovingBlock = 1
+					// + Alterable Value(900) of Group.MovingBlock > 0
+					// + Alterable Value(1002) of Group.Instance = AltValN( "Group.MovingBlock", 900 )
+					// + Alterable Value(1000) of Group.Instance <> -1
+						// Group.Instance : Set Y position to Y( "Group.Instance" ) - AltValN( "Group.MovingBlock", 324 )
+						// Group.MovingBlock : Set Alterable Value(398) to 0
+
+						// + Group.Instance is overlapping Group.MovingBlock
+
+							// + Always
+								// Group.MovingBlock : Set Alterable Value(398) to 1
+								// Start loop for each one of Group.Instance, loop name "instance_movingblock_place_fix_y"
+
+							// + Always
+								// Group.MovingBlock : Set Alterable Value(398) to 0
+
+						// + Always
+							// Group.Instance : Set Y position to Alterable Value Y( "Group.Instance" )
+
+				// // 踩上补正
+
+				// * On each one of Group.MovingBlock, loop name "movingblock_place_fix_stand"
+
+					// + Alterable Value(900) of Group.MovingBlock = 0
+					// + Alterable Value(100) of Group.Gravity <> -1
+					// + Alterable Value(1002) of Group.Gravity <> -1
+					// + Alterable Value(1000) of Group.Gravity <> -1
+					//   OR (logical)
+					// + Alterable Value(900) of Group.MovingBlock > 0
+					// + Alterable Value(100) of Group.Gravity <> -1
+					// + Alterable Value(1002) of Group.Gravity = AltValN( "Group.MovingBlock", 900 )
+					// + Alterable Value(1000) of Group.Gravity <> -1
+						// Group.Gravity : Set Alterable Value(397) to Min(0, AltValN( "Group.MovingBlock", 323 ) * Cos(AltValN( "Group.Gravity", 102 )) - AltValN( "Group.MovingBlock", 324 ) * Sin(AltValN( "Group.Gravity", 102 )))
+						// Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) * ( 1 - AltValN( "Group.Gravity", 397 ) ) to Alterable Value X
+						// Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) * ( 1 - AltValN( "Group.Gravity", 397 ) ) to Alterable Value Y
+						// Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+						// Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+						// Group.Gravity : Set Alterable Value(399) to -1
+						// Group.MovingBlock : Set Alterable Value(397) to 1
+
+						// + Always
+							// Start loop for each one of Group.Gravity, loop name "gravity_movingblock_place_fix"
+
+						// + Alterable Value(399) of Group.Gravity = -1
+							// Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) * ( 1 - AltValN( "Group.Gravity", 397 ) ) to Alterable Value X
+							// Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) * ( 1 - AltValN( "Group.Gravity", 397 ) ) to Alterable Value Y
+							// Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+							// Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+							// Group.Gravity : Set Alterable Value(399) to 0
+
+						// + Alterable Value(397) of Group.MovingBlock = 1
+							// Group.MovingBlock : Set Alterable Value(397) to 0
+							//  Group.MovingBlock : Move to layer AltValN( "Group.MovingBlock", 325 )
+
+				// * On each one of Group.Instance, loop name "instance_movingblock_place_fix_x"
+				// + Group.Instance is overlapping Group.MovingBlock
+				// + Alterable Value(399) of Group.MovingBlock = 1
+
+					// + Alterable Value(323) of Group.MovingBlock > 0
+						// Group.Instance : Set Alterable Value(396) to 1
+
+						// + Alterable Value(361) of Group.Instance < 0
+							// Group.Instance : Set Alterable Value(1004) to 1
+							// Group.Instance : Set Alterable Value(1002) to -1
+
+						// + Always
+							// Group.Instance : Set Alterable Value(361) to 1
+
+					// + Alterable Value(323) of Group.MovingBlock < 0
+						// Group.Instance : Set Alterable Value(396) to -1
+
+						// + Alterable Value(361) of Group.Instance > 0
+							// Group.Instance : Set Alterable Value(1004) to 1
+							// Group.Instance : Set Alterable Value(1002) to -1
+
+						// + Always
+							// Group.Instance : Set Alterable Value(361) to -1
+
+					// + Always
+						// Group.Instance : Set Alterable Value(399) to 1
+						// Special : Start loop "instance_movingblock_place_fix_x" -1 times
+
+				// * On loop "instance_movingblock_place_fix_x"
+				// + Alterable Value(399) of Group.Instance = 1
+
+					// + Group.Instance is overlapping Group.MovingBlock
+					// + Alterable Value(399) of Group.MovingBlock = 1
+						// Group.Instance : Set X position to X( "Group.Instance" ) + AltValN( "Group.Instance", 361 )
+						//  Special : Break
+
+					// + Alterable Value(399) of Group.MovingBlock = 1
+						// Group.Instance : Set X position to X( "Group.Instance" ) + AltValN( "Group.MovingBlock", 323 )
+						// Start loop for each one of Group.Instance, loop name "instance_movingblock_place_death"
+
+					// + Always
+						// Group.Instance : Set Alterable Value X to X( "Group.Instance" )
+						// Group.Instance : Set Alterable Value(399) to 0
+						// Special : Stop loop "instance_movingblock_place_fix_x"
+
+				// * On each one of Group.Instance, loop name "instance_movingblock_place_fix_y"
+				// + Group.Instance is overlapping Group.MovingBlock
+				// + Alterable Value(398) of Group.MovingBlock = 1
+
+					// + Alterable Value(324) of Group.MovingBlock > 0
+						// Group.Instance : Set Alterable Value(395) to 1
+
+						// + Alterable Value(362) of Group.Instance < 0
+							// Group.Instance : Set Alterable Value(1004) to 1
+							// Group.Instance : Set Alterable Value(1002) to -1
+
+						// + Always
+							// Group.Instance : Set Alterable Value(362) to 1
+
+					// + Alterable Value(324) of Group.MovingBlock < 0
+						// Group.Instance : Set Alterable Value(395) to -1
+
+						// + Alterable Value(362) of Group.Instance > 0
+							// Group.Instance : Set Alterable Value(1004) to 1
+							// Group.Instance : Set Alterable Value(1002) to -1
+
+						// + Always
+							// Group.Instance : Set Alterable Value(362) to -1
+
+					// + Always
+						// Group.Instance : Set Alterable Value(399) to 2
+						// Special : Start loop "instance_movingblock_place_fix_y" -1 times
+
+				// * On loop "instance_movingblock_place_fix_y"
+				// + Alterable Value(399) of Group.Instance = 2
+
+					// + Group.Instance is overlapping Group.MovingBlock
+					// + Alterable Value(398) of Group.MovingBlock = 1
+						// Group.Instance : Set Y position to Y( "Group.Instance" ) + AltValN( "Group.Instance", 362 )
+						//  Special : Break
+
+					// + Alterable Value(398) of Group.MovingBlock = 1
+						// Group.Instance : Set Y position to Y( "Group.Instance" ) + AltValN( "Group.MovingBlock", 324 )
+						// Start loop for each one of Group.Instance, loop name "instance_movingblock_place_death"
+
+					// + Always
+						// Group.Instance : Set Alterable Value Y to Y( "Group.Instance" )
+						// Group.Instance : Set Alterable Value(399) to 0
+						// Special : Stop loop "instance_movingblock_place_fix_y"
+
+				// * On each one of Group.Instance, loop name "instance_movingblock_place_death"
+
+					// + Group.Instance is overlapping a backdrop
+					//   OR (logical)
+					// + Group.Instance is overlapping Group.Solid
+					// + Alterable Value(900) of Group.Solid = 0
+					//   OR (logical)
+					// + Group.Instance is overlapping Group.Solid
+					// + Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1002 )
+						// Group.Instance : Set Alterable Value(1004) to 1
+						// Group.Instance : Set Alterable Value(1002) to -1
+
+				// * On each one of Group.Gravity, loop name "gravity_movingblock_place_fix"
+				// + Group.Gravity is overlapping Group.MovingBlock
+				// + Alterable Value(397) of Group.MovingBlock = 1
+					// Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) * ( 1 - AltValN( "Group.Gravity", 397 ) ) to Alterable Value X
+					// Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) * ( 1 - AltValN( "Group.Gravity", 397 ) ) to Alterable Value Y
+					// Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					// Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+					// Group.Gravity : Set Alterable Value(399) to 3
+
+					// + Alterable Value(1019) of Group.MovingBlock = 1
+
+						// + Sin(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.MovingBlock", 324 ) < 0
+						//   OR (logical)
+						// + Cos(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.MovingBlock", 323 ) > 0
+							// Group.Gravity : Add 1 to Alterable Value(360)
+							// Group.Gravity : Set Alterable Value(360 - AltValN( "Group.Gravity", 360 )) to Fixed( "Group.MovingBlock" )
+
+					// + Sin(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.Gravity", 395 ) > 0
+					//   OR (logical)
+					// + Cos(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.Gravity", 396 ) < 0
+						// Group.Gravity : Set Alterable Value(399) to 0
+
+						// + Alterable Value(397) of Group.MovingBlock = 1
+
+							// + Alterable Value(301) of Group.MovingBlock = 0
+							//   OR (logical)
+							// + Alterable Value(301) of Group.MovingBlock = 1
+
+								// + Alterable Value(396) of Group.Gravity = 0
+								// + Alterable Value(323) of Group.MovingBlock <> 0
+									// Group.Gravity : Add AltValN( "Group.MovingBlock", 323 ) - AltValN( "Group.Gravity", 363 ) to Alterable Value(363)
+
+							// + Alterable Value(301) of Group.MovingBlock = 0
+							//   OR (logical)
+							// + Alterable Value(301) of Group.MovingBlock = 2
+
+								// + Alterable Value(395) of Group.Gravity = 0
+								// + Alterable Value(324) of Group.MovingBlock <> 0
+									// Group.Gravity : Add AltValN( "Group.MovingBlock", 324 ) - AltValN( "Group.Gravity", 364 ) to Alterable Value(364)
+
+							// + Alterable Value(1019) of Group.MovingBlock = 1
+								// Group.Gravity : Add 1 to Alterable Value(360)
+								// Group.Gravity : Set Alterable Value(360 - AltValN( "Group.Gravity", 360 )) to Fixed( "Group.MovingBlock" )
+
+					// + Alterable Value(399) of Group.Gravity = 3
+					// + Alterable Value(101) of Group.Gravity >= AltValN( "Group.Gravity", 397 )
+
+						// + Group.Gravity is overlapping Group.MovingBlock
+						// + Alterable Value(397) of Group.MovingBlock = 1
+							// Group.Gravity : Set Alterable Value(399) to 0
+							//  Special : Break
+
+						// + Alterable Value(397) of Group.MovingBlock = 1
+							// Group.Gravity : Set Alterable Value(100) to 0
+							// Group.Gravity : Set Alterable Value(101) to 0
+							// Group.Gravity : Set Alterable Value(399) to 4
+							// Special : Start loop "gravity_movingblock_place_fix" -1 times
+
+				// * On loop "gravity_movingblock_place_fix"
+				// + Alterable Value(399) of Group.Gravity = 4
+					// Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					// Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					// Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					// Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+					// + Group.Gravity is overlapping Group.MovingBlock
+					// + Alterable Value(397) of Group.MovingBlock = 1
+						// Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+						// Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+						// Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+						// Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+						// + Alterable Value(301) of Group.MovingBlock = 0
+						//   OR (logical)
+						// + Alterable Value(301) of Group.MovingBlock = 1
+
+							// + Alterable Value(396) of Group.Gravity = 0
+							// + Alterable Value(323) of Group.MovingBlock <> 0
+								// Group.Gravity : Add AltValN( "Group.MovingBlock", 323 ) - AltValN( "Group.Gravity", 363 ) to Alterable Value(363)
+
+						// + Alterable Value(301) of Group.MovingBlock = 0
+						//   OR (logical)
+						// + Alterable Value(301) of Group.MovingBlock = 2
+
+							// + Alterable Value(395) of Group.Gravity = 0
+							// + Alterable Value(324) of Group.MovingBlock <> 0
+								// Group.Gravity : Add AltValN( "Group.MovingBlock", 324 ) - AltValN( "Group.Gravity", 364 ) to Alterable Value(364)
+
+						// + Always
+							// Group.Gravity : Set Alterable Value(399) to 0
+							// Special : Stop loop "gravity_movingblock_place_fix"
+
+			// 踩上检测
+			// Returns: var. 350 =1/0
+			// 调用后请务必重置 var.350 = 0
+
+			* On each one of Group.MovingBlock, loop name "is_mario_stand_on"
+				Group.MovingBlock : Set Alterable Value(350) to 0
+
+				+ Alterable Value(900) of Group.MovingBlock <> 0
+				+ Alterable Value(900) of Group.MovingBlock <> AltValN( "Mario", 1002 )
+					 Special : Break
+
+				+ Alterable Value(100) of Mario = 0
+				+ Alterable Value(1000) of Mario <> -1
+					Mario : Add Cos(AltValN( "Mario", 102 )) to Alterable Value X
+					Mario : Add 0 - Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+					Mario : Set X position to Alterable Value X( "Mario" )
+					Mario : Set Y position to Alterable Value Y( "Mario" )
+
+					+ Mario is overlapping Group.MovingBlock
+						Mario : Add 0 - Cos(AltValN( "Mario", 102 )) to Alterable Value X
+						Mario : Add Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+						Mario : Set X position to Alterable Value X( "Mario" )
+						Mario : Set Y position to Alterable Value Y( "Mario" )
+						Start loop for each one of Group.MovingBlock, loop name "movingblock_step_mario"
+
+					+ Always
+						Mario : Add 0 - Cos(AltValN( "Mario", 102 )) to Alterable Value X
+						Mario : Add Sin(AltValN( "Mario", 102 )) to Alterable Value Y
+						Mario : Set X position to Alterable Value X( "Mario" )
+						Mario : Set Y position to Alterable Value Y( "Mario" )
+
+			* On each one of Group.MovingBlock, loop name "is_gravity_object_stand_on"
+				Group.MovingBlock : Set Alterable Value(350) to 0
+
+				+ Alterable Value(900) of Group.MovingBlock < 0
+					 Special : Break
+
+				+ Alterable Value(900) of Group.MovingBlock = 0
+				+ Alterable Value(100) of Group.Gravity = 0
+				+ Alterable Value(1000) of Group.Gravity <> -1
+				+ Alterable Value(1002) of Group.Gravity >= 0
+				  OR (logical)
+				+ Alterable Value(1002) of Group.Gravity = AltValN( "Group.MovingBlock", 900 )
+				+ Alterable Value(100) of Group.Gravity = 0
+				+ Alterable Value(1000) of Group.Gravity <> -1
+					Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+					+ Group.Gravity is overlapping Group.MovingBlock
+						Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+						Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+						Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+						Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+						Group.Gravity : Set Alterable Value(398) to 1
+						Start loop for each one of Group.MovingBlock, loop name "movingblock_step_gravity"
+
+					+ Always
+						Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+						Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+						Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+						Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+		[ MovingBlock Fix ]
+
+			// 30000: 踩上的重力对象总数
+			// 30000+: 踩上的重力对象 Fix 值
+			// 
+			// -----以下是补正相关临时变量-----
+			// 
+			// --Group.MovingBlock--
+			// 
+			// 351: 旋转补正 X
+			// 352: 旋转补正 Y
+			// 353: 旋转角度
+			// 354: 补正 x 速度
+			// 355: 补正 y 速度
+			// 359: 记录图层
+			// 360: 用于筛选
+			// 
+			// --Group.Instance & Gravity--
+			// 
+			// 351: 初始x坐标
+			// 352: 初始y坐标
+			// 353: 新x坐标
+			// 354: 新y坐标
+			// 
+			// 356: Push 是否成功
+			// 357: 补正最大值与方向
+			// 358: Push 筛选
+			// 359: 踩上补正筛选
+			// 360: 用于筛选
+			// 371: 左累积 x 速度
+			// 372: 右累积 x 速度
+			// 373: 上累积 y 速度
+			// 374: 下累积 y 速度
+			// 375: 补正 x 速度
+			// 376: 补正 y 速度
+
+			* Always
+				Group.Gravity : Set Alterable Value(371) to 0
+				Group.Gravity : Set Alterable Value(372) to 0
+				Group.Gravity : Set Alterable Value(373) to 0
+				Group.Gravity : Set Alterable Value(374) to 0
+
+			* Alterable Value(326) of Group.MovingBlock = 0
+			+ Alterable Value(1013) of Group.MovingBlock = 1
+			+ Alterable Value(1019) of Group.MovingBlock > 0
+			+ Alterable Value(900) of Group.MovingBlock >= 0
+				Group.MovingBlock : Set Alterable Value(323) to Angle( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(324) to X( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(325) to Y( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(359) to Layer( "Group.MovingBlock" )
+				Start loop for each one of Group.MovingBlock, loop name "movingblock_fix"
+
+			* Always
+				Special : Start loop "movingblock_fix_end" 1 times
+
+			* On each one of Group.MovingBlock, loop name "movingblock_fix"
+
+				// 处理额外的踩上补正
+
+				+ Alterable Value(301) of Group.MovingBlock >= 0
+
+					+ Group.MovingBlock is overlapping Group.Gravity
+					+ Alterable Value(100) of Group.Gravity >= 0
+					+ Alterable Value(900) of Group.MovingBlock = 0
+					  OR (logical)
+					+ Group.MovingBlock is overlapping Group.Gravity
+					+ Alterable Value(100) of Group.Gravity >= 0
+					+ Alterable Value(1002) of Group.Gravity = AltValN( "Group.MovingBlock", 900 )
+						Group.MovingBlock : Set Alterable Value(360) to 1
+						Start loop for each one of Group.Gravity, loop name "gravity_check_stand_movingblock"
+
+				// 处理实心 Push
+
+				+ Always
+					Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 324 )
+					Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 325 )
+					 Group.MovingBlock : Set angle to AltValN( "Group.MovingBlock", 323 ) (Quality = 0)
+
+				+ Alterable Value(1019) of Group.MovingBlock = 1
+
+					+ Group.MovingBlock is overlapping Group.Instance
+					+ Alterable Value(1002) of Group.Instance >= 0
+					+ Alterable Value(900) of Group.MovingBlock = 0
+					  OR (logical)
+					+ Group.MovingBlock is overlapping Group.Instance
+					+ Alterable Value(1002) of Group.Instance = AltValN( "Group.MovingBlock", 900 )
+						Group.MovingBlock : Set Alterable Value(360) to 1
+						Start loop for each one of Group.Instance, loop name "instance_movingblock_push"
+
+				+ Always
+					Group.MovingBlock : Set Alterable Value(360) to 0
+
+			* On each one of Group.Gravity, loop name "gravity_check_stand_movingblock"
+				Group.Gravity : Set Alterable Value(360) to 1
+
+				// 先检查是否已经在 List 中
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+				+ Alterable Value(30000) of Group.MovingBlock > 0
+					Group.MovingBlock : Set Alterable Value(362) to 0
+					Special : Start loop "is_gravity_object_in_stand_list" AltValN( "Group.MovingBlock", 30000 ) times
+
+				+ Alterable Value(360) of Group.Gravity = 2
+					Group.Gravity : Set Alterable Value(360) to 0
+					 Special : Break
+
+				// 插值法判定踩上情况并进行补正
+
+				+ Always
+					 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+					Group.Gravity : Set Alterable Value(359) to 1
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+					 Group.MovingBlock : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+					Group.MovingBlock : Set Alterable Value(361) to Max(Max(Abs(AltValN( "Group.MovingBlock", 323 ) - AltValN( "Group.MovingBlock", 320 )), Abs(AltValN( "Group.MovingBlock", 324 ) - AltValN( "Group.MovingBlock", 321 ))), Abs(AltValN( "Group.MovingBlock", 325 ) - AltValN( "Group.MovingBlock", 322 )))
+					Special : Start loop "moving_block_update_stand_list" AltValN( "Group.MovingBlock", 361 ) times
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+					Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 324 )
+					Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 325 )
+					 Group.MovingBlock : Set angle to AltValN( "Group.MovingBlock", 323 ) (Quality = 0)
+					 Group.MovingBlock : Move to layer AltValN( "Group.MovingBlock", 359 )
+					 Group.Gravity : Move to layer AltValN( "Group.MovingBlock", 359 )
+
+				+ Alterable Value(360) of Group.Gravity = 2
+					Group.Gravity : Set Alterable Value(360) to 0
+					 Special : Break
+
+				+ Always
+					Group.Gravity : Set Alterable Value(359) to 0
+					Group.Gravity : Set Alterable Value(360) to 0
+
+			* On loop "is_gravity_object_in_stand_list"
+			+ Alterable Value(360) of Group.MovingBlock = 1
+
+				+ Always
+					Group.MovingBlock : Set Alterable Value(361) to LoopIndex("is_gravity_object_in_stand_list") + 1
+					Start loop for each one of Group.MovingBlock, loop name "is_gravity_object_in_list"
+
+				+ Alterable Value(362) of Group.MovingBlock = 1
+					Group.MovingBlock : Set Alterable Value(362) to 0
+					Special : Stop loop "is_gravity_object_in_stand_list"
+
+			* On each one of Group.MovingBlock, loop name "is_gravity_object_in_list"
+			+ Alterable Value(360) of Group.Instance = 1
+			+ Fixed value of Group.Instance = AltValN( "Group.MovingBlock", 30000 + AltValN( "Group.MovingBlock", 361 ) )
+				Group.Instance : Set Alterable Value(360) to 2
+				Group.MovingBlock : Set Alterable Value(362) to 1
+
+			* On loop "moving_block_update_stand_list"
+			+ Alterable Value(360) of Group.MovingBlock = 1
+				Group.MovingBlock : Set Alterable Value(362) to ( LoopIndex("moving_block_update_stand_list") * 1.0 ) / ( AltValN( "Group.MovingBlock", 361 ) - 1 )
+				Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 321 ) * ( 1 - AltValN( "Group.MovingBlock", 362 ) ) + AltValN( "Group.MovingBlock", 324 ) * AltValN( "Group.MovingBlock", 362 )
+				Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 322 ) * ( 1 - AltValN( "Group.MovingBlock", 362 ) ) + AltValN( "Group.MovingBlock", 325 ) * AltValN( "Group.MovingBlock", 362 )
+				 Group.MovingBlock : Set angle to AltValN( "Group.MovingBlock", 320 ) * ( 1 - AltValN( "Group.MovingBlock", 362 ) ) + AltValN( "Group.MovingBlock", 323 ) * AltValN( "Group.MovingBlock", 362 ) (Quality = 0)
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+				+ NOT Group.MovingBlock is overlapping Group.Gravity
+
+					+ Alterable Value(360) of Group.Gravity = 1
+						Start loop for each one of Group.Gravity, loop name "gravity_update_stand_check"
+
+					+ Alterable Value(360) of Group.Gravity = 2
+						Special : Stop loop "moving_block_update_stand_list"
+
+			* On each one of Group.Gravity, loop name "gravity_update_stand_check"
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+					Group.MovingBlock : Set X position to X( "Group.MovingBlock" ) - 4 * Cos(AltValN( "Group.Gravity", 102 ))
+					Group.MovingBlock : Set Y position to Y( "Group.MovingBlock" ) + 4 * Sin(AltValN( "Group.Gravity", 102 ))
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+				+ Group.MovingBlock is overlapping Group.Gravity
+
+					+ Always
+						Group.MovingBlock : Set X position to X( "Group.MovingBlock" ) + 4 * Cos(AltValN( "Group.Gravity", 102 ))
+						Group.MovingBlock : Set Y position to Y( "Group.MovingBlock" ) - 4 * Sin(AltValN( "Group.Gravity", 102 ))
+						Start loop for each one of Group.MovingBlock, loop name "movingblock_accumulate_velocity_to_gravity"
+
+					+ Always
+						Group.Gravity : Set Alterable Value(360) to 2
+
+			* On each one of Group.Instance, loop name "instance_movingblock_push"
+
+				+ Alterable Value(1011) of Group.Instance = 1
+				+ Alterable Value(100) of Group.Instance = 0
+				  OR (logical)
+				+ Alterable Value(1012) of Group.Instance = 1
+				+ Alterable Value(200) of Group.Instance = 0
+					Group.Instance : Set Alterable Value(360) to 1
+
+				+ Alterable Value(360) of Group.Instance = 0
+					 Special : Break
+
+				// 先检查是否已经在 List 中
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+				+ Alterable Value(30000) of Group.MovingBlock > 0
+					Group.MovingBlock : Set Alterable Value(362) to 0
+					Special : Start loop "is_gravity_object_in_stand_list" AltValN( "Group.MovingBlock", 30000 ) times
+
+				+ Alterable Value(360) of Group.Instance = 2
+					Group.Instance : Set Alterable Value(360) to 0
+					 Special : Break
+
+				+ Alterable Value(360) of Group.MovingBlock = 1
+					Group.Instance : Set Alterable Value(358) to 1
+					Start loop for each one of Group.MovingBlock, loop name "movingblock_push"
+
+				+ Always
+					Group.Instance : Set Alterable Value(360) to 0
+
+			// 实心 Push
+
+			* On each one of Group.MovingBlock, loop name "movingblock_push"
+				 Group.MovingBlock : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Alterable Value(358) of Group.Instance = 1
+					Group.Instance : Set Alterable Value(356) to 0
+					 Group.Instance : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Always
+					Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 321 )
+					Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 325 )
+
+				+ Alterable Value(358) of Group.Instance = 1
+				+ NOT Group.MovingBlock is overlapping Group.Instance
+					Group.Instance : Set Alterable Value(357) to AltValN( "Group.MovingBlock", 324 ) - X( "Group.MovingBlock" )
+					Special : Start loop "instance_movingblock_push_x" Abs(AltValN( "Group.Instance", 357 )) times
+
+				+ Alterable Value(358) of Group.Instance = 1
+				+ Alterable Value(356) of Group.Instance = 0
+					Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 324 )
+					Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 322 )
+
+				+ Alterable Value(358) of Group.Instance = 1
+				+ Alterable Value(356) of Group.Instance = 0
+				+ NOT Group.MovingBlock is overlapping Group.Instance
+					Group.Instance : Set Alterable Value(357) to AltValN( "Group.MovingBlock", 325 ) - Y( "Group.MovingBlock" )
+					Special : Start loop "instance_movingblock_push_y" Abs(AltValN( "Group.Instance", 357 )) times
+
+				+ Alterable Value(358) of Group.Instance = 1
+					Group.Instance : Set Alterable Value(356) to 0
+					Group.Instance : Set Alterable Value(358) to 0
+					 Group.Instance : Move to layer AltValN( "Group.MovingBlock", 359 )
+
+				+ Always
+					Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 324 )
+					Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 325 )
+					 Group.MovingBlock : Move to layer AltValN( "Group.MovingBlock", 359 )
+
+			* On loop "instance_movingblock_push_x"
+			+ Alterable Value(358) of Group.Instance = 1
+
+				+ Alterable Value(357) of Group.Instance > 0
+					Group.Instance : Set X position to X( "Group.Instance" ) + 1
+
+				+ Alterable Value(357) of Group.Instance < 0
+					Group.Instance : Set X position to X( "Group.Instance" ) - 1
+
+				+ Alterable Value(358) of Group.Instance = 1
+				+ NOT Group.Instance is overlapping Group.MovingBlock
+					Group.Instance : Set Alterable Value(356) to 1
+					Group.Instance : Set Alterable Value X to X( "Group.Instance" )
+					Special : Stop loop "instance_movingblock_push_x"
+
+			* On loop "instance_movingblock_push_y"
+			+ Alterable Value(358) of Group.Instance = 1
+
+				+ Alterable Value(357) of Group.Instance > 0
+					Group.Instance : Set Y position to Y( "Group.Instance" ) + 1
+
+				+ Alterable Value(357) of Group.Instance < 0
+					Group.Instance : Set Y position to Y( "Group.Instance" ) - 1
+
+				+ Alterable Value(358) of Group.Instance = 1
+				+ NOT Group.Instance is overlapping Group.MovingBlock
+					Group.Instance : Set Alterable Value(356) to 1
+					Group.Instance : Set Alterable Value Y to Y( "Group.Instance" )
+					Special : Stop loop "instance_movingblock_push_y"
+
+			// 累积速度，以当前 X，Y，Angle 作为原始信息
+
+			* On each one of Group.MovingBlock, loop name "movingblock_accumulate_velocity_to_gravity"
+
+				+ Alterable Value(359) of Group.Gravity = 1
+					Group.MovingBlock : Set Alterable Value(353) to AltValN( "Group.MovingBlock", 323 ) - Angle( "Group.MovingBlock" )
+					Group.MovingBlock : Set Alterable Value(351) to X( "Group.MovingBlock" ) + Cos(AltValN( "Group.MovingBlock", 353 )) * ( Alterable Value X( "Group.Gravity" ) - X( "Group.MovingBlock" ) ) + Sin(AltValN( "Group.MovingBlock", 353 )) * ( Alterable Value Y( "Group.Gravity" ) - Y( "Group.MovingBlock" ) ) - Alterable Value X( "Group.Gravity" )
+					Group.MovingBlock : Set Alterable Value(352) to Y( "Group.MovingBlock" ) - Sin(AltValN( "Group.MovingBlock", 353 )) * ( Alterable Value X( "Group.Gravity" ) - X( "Group.MovingBlock" ) ) + Cos(AltValN( "Group.MovingBlock", 353 )) * ( Alterable Value Y( "Group.Gravity" ) - Y( "Group.MovingBlock" ) ) - Alterable Value Y( "Group.Gravity" )
+					Group.MovingBlock : Set Alterable Value(354) to AltValN( "Group.MovingBlock", 324 ) - X( "Group.MovingBlock" ) + AltValN( "Group.MovingBlock", 351 )
+					Group.MovingBlock : Set Alterable Value(355) to AltValN( "Group.MovingBlock", 325 ) - Y( "Group.MovingBlock" ) + AltValN( "Group.MovingBlock", 352 )
+					Group.MovingBlock : Add AltValN( "Group.MovingBlock", 328 ) to Alterable Value(354)
+					Group.MovingBlock : Add AltValN( "Group.MovingBlock", 329 ) to Alterable Value(355)
+
+				+ Alterable Value(301) of Group.MovingBlock = 1
+				+ Alterable Value(359) of Group.Gravity = 1
+					Group.MovingBlock : Set Alterable Value(353) to Cos(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.MovingBlock", 354 ) - Sin(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.MovingBlock", 355 )
+					Group.MovingBlock : Set Alterable Value(354) to Cos(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.MovingBlock", 353 )
+					Group.MovingBlock : Set Alterable Value(355) to 0 - Sin(AltValN( "Group.Gravity", 102 )) * AltValN( "Group.MovingBlock", 353 )
+
+				+ Alterable Value(359) of Group.Gravity = 1
+				+ Alterable Value(354) of Group.MovingBlock < 0
+					Group.Gravity : Set Alterable Value(371) to Min(AltValN( "Group.Gravity", 371 ), AltValN( "Group.MovingBlock", 354 ))
+
+				+ Alterable Value(359) of Group.Gravity = 1
+				+ Alterable Value(354) of Group.MovingBlock > 0
+					Group.Gravity : Set Alterable Value(372) to Max(AltValN( "Group.Gravity", 372 ), AltValN( "Group.MovingBlock", 354 ))
+
+				+ Alterable Value(359) of Group.Gravity = 1
+				+ Alterable Value(355) of Group.MovingBlock < 0
+					Group.Gravity : Set Alterable Value(373) to Min(AltValN( "Group.Gravity", 373 ), AltValN( "Group.MovingBlock", 355 ))
+
+				+ Alterable Value(359) of Group.Gravity = 1
+				+ Alterable Value(355) of Group.MovingBlock > 0
+					Group.Gravity : Set Alterable Value(374) to Max(AltValN( "Group.Gravity", 374 ), AltValN( "Group.MovingBlock", 355 ))
+
+				+ Alterable Value(359) of Group.Gravity = 1
+					Group.Gravity : Set Alterable Value(359) to 0
+
+			// 额外的踩上补正
+
+			* Alterable Value(1011) of Group.Gravity = 1
+				Group.Gravity : Set Alterable Value(375) to AltValN( "Group.Gravity", 371 ) + AltValN( "Group.Gravity", 372 )
+				Group.Gravity : Set Alterable Value(376) to AltValN( "Group.Gravity", 373 ) + AltValN( "Group.Gravity", 374 )
+				Group.Gravity : Add AltValN( "Group.Gravity", 375 ) to Alterable Value X
+				Group.Gravity : Add AltValN( "Group.Gravity", 376 ) to Alterable Value Y
+				Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+				Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+			// 记录位置
+
+			* Always
+				Group.Instance : Set Alterable Value(353) to X( "Group.Instance" )
+				Group.Instance : Set Alterable Value(354) to Y( "Group.Instance" )
+
+			// 禁用补正一帧（用于传送）
+
+			* Alterable Value(326) of Group.MovingBlock = 1
+				Group.MovingBlock : Set Alterable Value(326) to 0
+
+			// 清空踩上列表
+
+			* Always
+				Group.MovingBlock : Set Alterable Value(30000) to 0
+
+		// 使用变量 300~399
+		// 
+		// 300=-1: 禁用
+		//       = 0: 未定义
+		//       = 1: 运动
+		//       = 2: 掉落
+		//       = 3: 漂浮
+		// 
+		// 301= 0: 踩上正常补正
+		//       = 1: 仅补正重力方向
+		//       = -1: 禁用踩上补正
+		// 
+		// 320: 初始角度
+		// 321: 初始x坐标
+		// 322: 初始y坐标
+		// 323: 新角度
+		// 324: 新x坐标
+		// 325: 新y坐标
+		// 
+		// 326=1: 禁用补正一帧（用于传送）
+		// 328: 传送带速度 X
+		// 329: 传送带速度 Y
+		// 
+		// -----以下为内建运动系统使用变量-----
+		// 
+		// 302: x速度
+		// 303: y速度
+		// 
+		// 304=0: 开始时运动
+		//       =1: 马里奥踩上运动
+		//       =2: 任意重力物件踩上运动
+		// 
+		// 305=0: 反向后停止
+		//       =1: 反向后转向
+		//       =2: 反向后渐变转向
+		// 
+		// 306=0: 四方向停止
+		//       =1: 四方向转向
+		//       =2: 四方向渐变转向
+		// 
+		// 307=1: 马里奥踩上掉落
+		//       =2: 任意物件踩上掉落
+		// 
+		// 308=0: 踩上掉落后禁用检测
+		// 309=0: 踩上掉落后禁用恢复
+		// 
+		// 310: 渐变参数
+		// 
+		// 311: 运动x速度
+		// 312: 运动y速度
+		// 
+		// 313=0: 正常
+		//       =1: 反向
+		// 
+		// 314=0: 待检测踩上
+		//       =1: 开始运动
+		// 
+		// 315: 渐变转向距离x
+		// 316: 渐变转向加速度x
+		// 317: 渐变转向距离y
+		// 318: 渐变转向加速度y
+		// 319= 0: 渐变转向关闭
+		//       = 1: 渐变转向开启
+		// 
+		// 327: 掉落速度记录
+		// 
+		// 330: 漂浮振幅
+		// 331: 漂浮角速度
+		// 332: 漂浮原点 X
+		// 333: 漂浮原点 Y
+		// 334: 漂浮相位（初值应为 0）
+		// 
+		// 注：掉落运动还使用了 Group.Gravity 类似的参数
+
+		// 声明：我属于 Group.MovingBlock！！！
+
+		* Alterable Value(1013) of Group.MovingBlock = 0
+			Group.MovingBlock : Set Alterable Value(1013) to 1
+
+		// 初始化内建运动系统
+
+		* On each one of Group.MovingBlock, loop name "init_movement"
+			Group.MovingBlock : Set Alterable Value X to X( "Group.MovingBlock" )
+			Group.MovingBlock : Set Alterable Value Y to Y( "Group.MovingBlock" )
+			Group.MovingBlock : Set Alterable Value(300) to 1
+
+			+ Always
+				Group.MovingBlock : Set Alterable Value(102) to 重力方向( "Gravity Default Settings" )
+				Group.MovingBlock : Set Alterable Value(103) to 空中加速度（百分之一）( "Gravity Default Settings" ) * 0.2 / 100.0
+				Group.MovingBlock : Set Alterable Value(104) to 空中减速度（百分之一）( "Gravity Default Settings" ) * 0.2 / 100.0
+				Group.MovingBlock : Set Alterable Value(105) to 空中加速度（百分之一）( "Gravity Default Settings" ) * 0.2 / 100.0
+				Group.MovingBlock : Set Alterable Value(106) to 空中减速度（百分之一）( "Gravity Default Settings" ) * 0.2 / 100.0
+				Group.MovingBlock : Set Alterable Value(107) to 空中最大速度( "Gravity Default Settings" )
+				Group.MovingBlock : Set Alterable Value(108) to 空中最大速度( "Gravity Default Settings" )
+
+		// 记录初始坐标和角度，用于补正
+
+		* Alterable Value(300) of Group.MovingBlock <> -1
+		+ Alterable Value(301) of Group.MovingBlock >= 0
+			Group.MovingBlock : Set Alterable Value(320) to Angle( "Group.MovingBlock" )
+			Group.MovingBlock : Set Alterable Value(321) to X( "Group.MovingBlock" )
+			Group.MovingBlock : Set Alterable Value(322) to Y( "Group.MovingBlock" )
+
+		[ MovingBlock Build-in Movement ]
+
+			// 检测踩上
+
+			* Alterable Value(300) of Group.MovingBlock = 1
+			+ Alterable Value(314) of Group.MovingBlock = 0
+
+				+ Alterable Value(304) of Group.MovingBlock = 0
+					Group.MovingBlock : Set Alterable Value(314) to 1
+					Group.MovingBlock : Set Alterable Value(311) to AltValN( "Group.MovingBlock", 302 )
+					Group.MovingBlock : Set Alterable Value(312) to AltValN( "Group.MovingBlock", 303 )
+
+				+ Alterable Value(304) of Group.MovingBlock = 1
+					Start loop for each one of Group.MovingBlock, loop name "is_mario_stand_on"
+
+				+ Alterable Value(304) of Group.MovingBlock = 2
+					Start loop for each one of Group.MovingBlock, loop name "is_gravity_object_stand_on"
+
+				+ Alterable Value(350) of Group.MovingBlock = 1
+					Group.MovingBlock : Set Alterable Value(350) to 0
+					Group.MovingBlock : Set Alterable Value(314) to 1
+					Group.MovingBlock : Set Alterable Value(311) to AltValN( "Group.MovingBlock", 302 )
+					Group.MovingBlock : Set Alterable Value(312) to AltValN( "Group.MovingBlock", 303 )
+
+			// 检测掉落
+
+			* Alterable Value(300) of Group.MovingBlock = 1
+			+ Alterable Value(314) of Group.MovingBlock = 1
+
+				+ Alterable Value(307) of Group.MovingBlock = 1
+					Start loop for each one of Group.MovingBlock, loop name "is_mario_stand_on"
+
+				+ Alterable Value(307) of Group.MovingBlock = 2
+					Start loop for each one of Group.MovingBlock, loop name "is_gravity_object_stand_on"
+
+				+ Alterable Value(350) of Group.MovingBlock = 1
+					Group.MovingBlock : Set Alterable Value(350) to 0
+					Group.MovingBlock : Set Alterable Value(300) to 2
+					Group.MovingBlock : Set Alterable Value(327) to Sqr(AltValN( "Group.MovingBlock", 311 ) * AltValN( "Group.MovingBlock", 311 ) + AltValN( "Group.MovingBlock", 312 ) * AltValN( "Group.MovingBlock", 312 ))
+					Group.MovingBlock : Set Alterable Value(327) to AltValN( "Group.MovingBlock", 327 ) * Cos(VAngle(AltValN( "Group.MovingBlock", 311 ), AltValN( "Group.MovingBlock", 312 )) + AltValN( "Group.MovingBlock", 102 ) + 90)
+
+					+ Alterable Value(309) of Group.MovingBlock = 0
+						Group.MovingBlock : Set Alterable Value(308) to -1
+
+					+ Alterable Value(308) of Group.MovingBlock = 0
+						Group.MovingBlock : Set Alterable Value(307) to 0
+
+			// 掉落，由于不能直接调用 Group.Gravity，这里单独处理
+
+			* Alterable Value(300) of Group.MovingBlock = 2
+				Group.MovingBlock : Add AltValN( "Group.MovingBlock", 327 ) * Cos(AltValN( "Group.MovingBlock", 102 ) + 90) + AltValN( "Group.MovingBlock", 101 ) * Cos(AltValN( "Group.MovingBlock", 102 )) to Alterable Value X
+				Group.MovingBlock : Add 0 - AltValN( "Group.MovingBlock", 327 ) * Sin(AltValN( "Group.MovingBlock", 102 ) + 90) - AltValN( "Group.MovingBlock", 101 ) * Sin(AltValN( "Group.MovingBlock", 102 )) to Alterable Value Y
+				Group.MovingBlock : Set X position to Alterable Value X( "Group.MovingBlock" )
+				Group.MovingBlock : Set Y position to Alterable Value Y( "Group.MovingBlock" )
+				Group.MovingBlock : Set Alterable Value(123) to 1
+
+				+ Group.MovingBlock is overlapping Group.Water
+					Group.MovingBlock : Set Alterable Value(123) to 0
+
+					+ Alterable Value(108) of Group.MovingBlock <> 0
+						Group.MovingBlock : Set Alterable Value(190) to AltValN( "Group.MovingBlock", 101 ) - AltValN( "Group.MovingBlock", 108 )
+
+						+ Alterable Value(190) of Group.MovingBlock < 0
+							Group.MovingBlock : Add AltValN( "Group.MovingBlock", 105 ) to Alterable Value(101)
+
+						+ Alterable Value(190) of Group.MovingBlock > 0
+							Group.MovingBlock : Add 0 - AltValN( "Group.MovingBlock", 106 ) to Alterable Value(101)
+
+					+ Alterable Value(108) of Group.MovingBlock = 0
+						Group.MovingBlock : Add AltValN( "Group.MovingBlock", 105 ) to Alterable Value(101)
+
+				+ Alterable Value(123) of Group.MovingBlock = 1
+
+					+ Alterable Value(107) of Group.MovingBlock <> 0
+						Group.MovingBlock : Set Alterable Value(190) to AltValN( "Group.MovingBlock", 101 ) - AltValN( "Group.MovingBlock", 107 )
+
+						+ Alterable Value(190) of Group.MovingBlock < 0
+							Group.MovingBlock : Add AltValN( "Group.MovingBlock", 103 ) to Alterable Value(101)
+
+						+ Alterable Value(190) of Group.MovingBlock > 0
+							Group.MovingBlock : Add 0 - AltValN( "Group.MovingBlock", 104 ) to Alterable Value(101)
+
+					+ Alterable Value(107) of Group.MovingBlock = 0
+						Group.MovingBlock : Add AltValN( "Group.MovingBlock", 103 ) to Alterable Value(101)
+
+				+ Always
+					Start loop for each one of Group.MovingBlock, loop name "movingblock_fall_detect"
+
+			// 漂浮
+
+			* Alterable Value(300) of Group.MovingBlock = 3
+				Group.MovingBlock : Add AltValN( "Group.MovingBlock", 331 ) to Alterable Value(334)
+				Group.MovingBlock : Set X position to AltValN( "Group.MovingBlock", 332 ) + AltValN( "Group.MovingBlock", 330 ) * Sin(AltValN( "Group.MovingBlock", 334 )) * Cos(AltValN( "Group.MovingBlock", 102 ))
+				Group.MovingBlock : Set Y position to AltValN( "Group.MovingBlock", 333 ) - AltValN( "Group.MovingBlock", 330 ) * Sin(AltValN( "Group.MovingBlock", 334 )) * Sin(AltValN( "Group.MovingBlock", 102 ))
+
+			// 运动
+
+			* Alterable Value(300) of Group.MovingBlock = 1
+			+ Alterable Value(314) of Group.MovingBlock = 1
+
+				// 渐变转向
+
+				+ Alterable Value(319) of Group.MovingBlock = 1
+					Group.MovingBlock : Sub AltValN( "Group.MovingBlock", 316 ) from Alterable Value(311)
+					Group.MovingBlock : Sub AltValN( "Group.MovingBlock", 318 ) from Alterable Value(312)
+
+					+ Alterable Value(316) of Group.MovingBlock > 0
+					+ Alterable Value(311) of Group.MovingBlock <= Abs(AltValN( "Group.MovingBlock", 302 )) * -1
+						Group.MovingBlock : Set Alterable Value(311) to Abs(AltValN( "Group.MovingBlock", 302 )) * -1
+						Group.MovingBlock : Set Alterable Value(316) to 0
+
+					+ Alterable Value(316) of Group.MovingBlock < 0
+					+ Alterable Value(311) of Group.MovingBlock >= Abs(AltValN( "Group.MovingBlock", 302 ))
+						Group.MovingBlock : Set Alterable Value(311) to Abs(AltValN( "Group.MovingBlock", 302 ))
+						Group.MovingBlock : Set Alterable Value(316) to 0
+
+					+ Alterable Value(318) of Group.MovingBlock > 0
+					+ Alterable Value(312) of Group.MovingBlock <= Abs(AltValN( "Group.MovingBlock", 303 )) * -1
+						Group.MovingBlock : Set Alterable Value(312) to Abs(AltValN( "Group.MovingBlock", 303 )) * -1
+						Group.MovingBlock : Set Alterable Value(318) to 0
+
+					+ Alterable Value(318) of Group.MovingBlock < 0
+					+ Alterable Value(312) of Group.MovingBlock >= Abs(AltValN( "Group.MovingBlock", 303 ))
+						Group.MovingBlock : Set Alterable Value(312) to Abs(AltValN( "Group.MovingBlock", 303 ))
+						Group.MovingBlock : Set Alterable Value(318) to 0
+
+					+ Alterable Value(316) of Group.MovingBlock = 0
+					+ Alterable Value(318) of Group.MovingBlock = 0
+						Group.MovingBlock : Set Alterable Value(319) to 0
+
+				+ Alterable Value(319) of Group.MovingBlock = 0
+
+					+ Alterable Value(305) of Group.MovingBlock = 2
+					  OR (logical)
+					+ Alterable Value(306) of Group.MovingBlock = 2
+						Group.MovingBlock : Set Alterable Value(315) to 0
+						Group.MovingBlock : Set Alterable Value(316) to 0
+						Group.MovingBlock : Set Alterable Value(317) to 0
+						Group.MovingBlock : Set Alterable Value(318) to 0
+
+						// 计算渐变转向相关数值
+
+						+ Alterable Value(311) of Group.MovingBlock > 0
+							Group.MovingBlock : Set Alterable Value(315) to ( Abs(AltValN( "Group.MovingBlock", 302 )) * AltValN( "Group.MovingBlock", 310 ) ) / 2
+							Group.MovingBlock : Set Alterable Value(316) to Abs(AltValN( "Group.MovingBlock", 302 )) / ( AltValN( "Group.MovingBlock", 310 ) * 1.0 )
+
+						+ Alterable Value(311) of Group.MovingBlock < 0
+							Group.MovingBlock : Set Alterable Value(315) to ( Abs(AltValN( "Group.MovingBlock", 302 )) * AltValN( "Group.MovingBlock", 310 ) ) / -2
+							Group.MovingBlock : Set Alterable Value(316) to Abs(AltValN( "Group.MovingBlock", 302 )) / ( AltValN( "Group.MovingBlock", 310 ) * -1.0 )
+
+						+ Alterable Value(312) of Group.MovingBlock > 0
+							Group.MovingBlock : Set Alterable Value(317) to ( Abs(AltValN( "Group.MovingBlock", 303 )) * AltValN( "Group.MovingBlock", 310 ) ) / 2
+							Group.MovingBlock : Set Alterable Value(318) to Abs(AltValN( "Group.MovingBlock", 303 )) / ( AltValN( "Group.MovingBlock", 310 ) * 1.0 )
+
+						+ Alterable Value(312) of Group.MovingBlock < 0
+							Group.MovingBlock : Set Alterable Value(317) to ( Abs(AltValN( "Group.MovingBlock", 303 )) * AltValN( "Group.MovingBlock", 310 ) ) / -2
+							Group.MovingBlock : Set Alterable Value(318) to Abs(AltValN( "Group.MovingBlock", 303 )) / ( AltValN( "Group.MovingBlock", 310 ) * -1.0 )
+
+						// 碰撞检测
+
+						+ Alterable Value(315) of Group.MovingBlock <> 0
+						  OR (logical)
+						+ Alterable Value(317) of Group.MovingBlock <> 0
+							Group.MovingBlock : Set X position to X( "Group.MovingBlock" ) + AltValN( "Group.MovingBlock", 315 )
+							Group.MovingBlock : Set Y position to Y( "Group.MovingBlock" ) + AltValN( "Group.MovingBlock", 317 )
+							Start loop for each one of Group.MovingBlock, loop name "movingblock_gradual"
+
+				// 运动
+				// 这里XY分开处理
+
+				+ Alterable Value(311) of Group.MovingBlock <> 0
+					Group.MovingBlock : Add AltValN( "Group.MovingBlock", 311 ) to Alterable Value X
+					Group.MovingBlock : Set X position to Alterable Value X( "Group.MovingBlock" )
+					Group.MovingBlock : Set Y position to Alterable Value Y( "Group.MovingBlock" )
+					Start loop for each one of Group.MovingBlock, loop name "movingblock_detect_x"
+
+				+ Alterable Value(312) of Group.MovingBlock <> 0
+					Group.MovingBlock : Add AltValN( "Group.MovingBlock", 312 ) to Alterable Value Y
+					Group.MovingBlock : Set X position to Alterable Value X( "Group.MovingBlock" )
+					Group.MovingBlock : Set Y position to Alterable Value Y( "Group.MovingBlock" )
+					Start loop for each one of Group.MovingBlock, loop name "movingblock_detect_y"
+
+	[ Group.AutoPlace(var 500) ]
+
+		// 此组已整合至 Group.Instance
+		// 同时属于此组和 Group.Instance 没有效果
+		// 
+		// 使用变量 500~599
+		// 本组不处理穿透实心
+		// 
+		// 500=0：启用
+		//       =其他：禁用
+		// 
+		// 501=0：寻找最优解
+		// 501=1：强制向上
+		// 501=2：强制向下
+		// 501=3：强制向左
+		// 501=4：强制向右
+		// 
+		// 502: 最大值（默认为 12）
+		// 
+		// 599：防穿墙标记
+		// 598：原始x坐标
+		// 597：原始y坐标
+		// 596：搜索遍历值
+		// 
+		// 优先级：上>下>左>右
+
+		* Alterable Value(1015) of Group.AutoPlace = 0
+			Group.AutoPlace : Set Alterable Value(1015) to 1
+			Group.AutoPlace : Set Alterable Value(502) to 12
+
+		* Alterable Value(1011) of Group.AutoPlace = 0
+		+ Alterable Value(500) of Group.AutoPlace = 0
+		+ Alterable Value(599) of Group.AutoPlace = 0
+		+ Alterable Value(1002) of Group.AutoPlace >= 0
+
+			+ Group.AutoPlace is overlapping a backdrop
+			  OR (logical)
+			+ Group.AutoPlace is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.AutoPlace is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.AutoPlace", 1002 )
+				Group.AutoPlace : Set Alterable Value(599) to 1
+
+		// 防穿墙
+
+		* Alterable Value(1011) of Group.AutoPlace = 0
+		+ Alterable Value(599) of Group.AutoPlace = 1
+			Group.AutoPlace : Set Alterable Value(598) to X( "Group.AutoPlace" )
+			Group.AutoPlace : Set Alterable Value(597) to Y( "Group.AutoPlace" )
+			Start loop for each one of Group.AutoPlace, loop name "autoplace_place_fix_auto"
+
+		* On each one of Group.AutoPlace, loop name "autoplace_place_fix_auto"
+			Group.AutoPlace : Set Alterable Value(596) to 0
+			Group.AutoPlace : Set Alterable Value(599) to 2
+
+			+ Always
+				Special : Start loop "autoplace_place_fix_auto_loop" AltValN( "Group.AutoPlace", 502 ) times
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+				Group.AutoPlace : Set X position to Alterable Value X( "Group.AutoPlace" )
+				Group.AutoPlace : Set Y position to Alterable Value Y( "Group.AutoPlace" )
+				Group.AutoPlace : Set Alterable Value(1004) to 1
+				Group.AutoPlace : Set Alterable Value(599) to 0
+				Group.AutoPlace : Set Alterable Value(596) to 0
+
+		// 从四个方向同时进行搜索
+
+		* On loop "autoplace_place_fix_auto_loop"
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+				Group.AutoPlace : Add 1 to Alterable Value(596)
+
+			// 向上搜索
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 0
+			  OR (logical)
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 1
+				Group.AutoPlace : Set Y position to AltValN( "Group.AutoPlace", 597 ) - AltValN( "Group.AutoPlace", 596 )
+				Group.AutoPlace : Set Alterable Value(599) to 3
+
+				+ Group.AutoPlace is overlapping a backdrop
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.AutoPlace", 1002 )
+					Group.AutoPlace : Set Alterable Value(599) to 2
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+				Group.AutoPlace : Set Y position to AltValN( "Group.AutoPlace", 597 )
+
+			// 向下搜索
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 0
+			  OR (logical)
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 2
+				Group.AutoPlace : Set Y position to AltValN( "Group.AutoPlace", 597 ) + AltValN( "Group.AutoPlace", 596 )
+				Group.AutoPlace : Set Alterable Value(599) to 3
+
+				+ Group.AutoPlace is overlapping a backdrop
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.AutoPlace", 1002 )
+					Group.AutoPlace : Set Alterable Value(599) to 2
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+				Group.AutoPlace : Set Y position to AltValN( "Group.AutoPlace", 597 )
+
+			// 向左搜索
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 0
+			  OR (logical)
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 3
+				Group.AutoPlace : Set X position to AltValN( "Group.AutoPlace", 598 ) - AltValN( "Group.AutoPlace", 596 )
+				Group.AutoPlace : Set Alterable Value(599) to 3
+
+				+ Group.AutoPlace is overlapping a backdrop
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.AutoPlace", 1002 )
+					Group.AutoPlace : Set Alterable Value(599) to 2
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+				Group.AutoPlace : Set X position to AltValN( "Group.AutoPlace", 598 )
+
+			// 向右搜索
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 0
+			  OR (logical)
+			+ Alterable Value(599) of Group.AutoPlace = 2
+			+ Alterable Value(501) of Group.AutoPlace = 4
+				Group.AutoPlace : Set X position to AltValN( "Group.AutoPlace", 598 ) + AltValN( "Group.AutoPlace", 596 )
+				Group.AutoPlace : Set Alterable Value(599) to 3
+
+				+ Group.AutoPlace is overlapping a backdrop
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.AutoPlace is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.AutoPlace", 1002 )
+					Group.AutoPlace : Set Alterable Value(599) to 2
+
+			+ Alterable Value(599) of Group.AutoPlace = 2
+				Group.AutoPlace : Set X position to AltValN( "Group.AutoPlace", 598 )
+
+		* On loop "autoplace_place_fix_auto_loop"
+		+ Alterable Value(599) of Group.AutoPlace = 3
+			Group.AutoPlace : Set Alterable Value X to X( "Group.AutoPlace" )
+			Group.AutoPlace : Set Alterable Value Y to Y( "Group.AutoPlace" )
+			Group.AutoPlace : Set Alterable Value(599) to 0
+			Group.AutoPlace : Set Alterable Value(596) to 0
+			Special : Stop loop "autoplace_place_fix_auto_loop"
+
+	[ Group.Instance(var 1000) ]
+
+		[ Foreach Function(Group.Instance) ]
+
+			// Foreach 函数手册：
+			// 
+			// instance_place_fix：陷入实心补正
+			// -Argument:
+			// --1098: 需要检测的实心类型（参见实心说明）
+			// --1097 = 1: 无视 Backdrop & Group.Solid
+			// --1096 = 1: 无视 Group.Platform
+			// --1095: 方向（角度制）
+			// --1094: 最大深度
+			// --1093 = 1: 禁用最大深度
+			// -Return: 
+			// --1099 = 1: 执行成功
+			//             = 0: 未执行（超过最大深度）
+
+			// instance_place_fix
+
+			* On each one of Group.Instance, loop name "instance_place_fix"
+			+ Alterable Value(1098) of Group.Instance <> -1
+				Group.Instance : Set Alterable Value(1089) to 1
+				Group.Instance : Set Alterable Value(1088) to X( "Group.Instance" )
+				Group.Instance : Set Alterable Value(1087) to Y( "Group.Instance" )
+				Special : Start loop "instance_place_fix" -1 times
+
+			* On loop "instance_place_fix"
+			+ Alterable Value(1089) of Group.Instance > 0
+
+				+ Always
+					Group.Instance : Set Alterable Value(1089) to 2
+
+				+ Alterable Value(1097) of Group.Instance = 0
+
+					+ Group.Instance is overlapping a backdrop
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = 0
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1098 )
+						Group.Instance : Set Alterable Value(1089) to 1
+						Group.Instance : Add Cos(AltValN( "Group.Instance", 1095 )) to Alterable Value(1088)
+						Group.Instance : Add 0 - Sin(AltValN( "Group.Instance", 1095 )) to Alterable Value(1087)
+						Group.Instance : Sub 1 from Alterable Value(1094)
+
+				+ Alterable Value(1096) of Group.Instance = 0
+				+ Group.Instance is overlapping Group.Platform
+
+					+ Alterable Value(900) of Group.Platform = 0
+					  OR (logical)
+					+ Alterable Value(900) of Group.Platform = AltValN( "Group.Instance", 1098 )
+						Group.Instance : Set Alterable Value(1089) to 1
+						Group.Instance : Add Cos(AltValN( "Group.Instance", 1095 )) to Alterable Value(1088)
+						Group.Instance : Add 0 - Sin(AltValN( "Group.Instance", 1095 )) to Alterable Value(1087)
+						Group.Instance : Sub 1 from Alterable Value(1094)
+
+				+ Always
+					Group.Instance : Set X position to AltValN( "Group.Instance", 1088 )
+					Group.Instance : Set Y position to AltValN( "Group.Instance", 1087 )
+
+				+ Alterable Value(1093) of Group.Instance = 0
+				+ Alterable Value(1094) of Group.Instance < 0
+					Group.Instance : Set X position to Alterable Value X( "Group.Instance" )
+					Group.Instance : Set Y position to Alterable Value Y( "Group.Instance" )
+					Group.Instance : Set Alterable Value(1087) to 0
+					Group.Instance : Set Alterable Value(1088) to 0
+					Group.Instance : Set Alterable Value(1089) to 0
+					Group.Instance : Set Alterable Value(1098) to 0
+					Group.Instance : Set Alterable Value(1097) to 0
+					Group.Instance : Set Alterable Value(1096) to 0
+					Group.Instance : Set Alterable Value(1095) to 0
+					Group.Instance : Set Alterable Value(1094) to 0
+					Group.Instance : Set Alterable Value(1093) to 0
+					Group.Instance : Set Alterable Value(1099) to 0
+					Special : Stop loop "instance_place_fix"
+
+				+ Alterable Value(1089) of Group.Instance = 2
+				+ Alterable Value(1093) of Group.Instance = 1
+				  OR (logical)
+				+ Alterable Value(1089) of Group.Instance = 2
+				+ Alterable Value(1094) of Group.Instance >= 0
+					Group.Instance : Set Alterable Value X to AltValN( "Group.Instance", 1088 )
+					Group.Instance : Set Alterable Value Y to AltValN( "Group.Instance", 1087 )
+					Group.Instance : Set Alterable Value(1087) to 0
+					Group.Instance : Set Alterable Value(1088) to 0
+					Group.Instance : Set Alterable Value(1089) to 0
+					Group.Instance : Set Alterable Value(1098) to 0
+					Group.Instance : Set Alterable Value(1097) to 0
+					Group.Instance : Set Alterable Value(1096) to 0
+					Group.Instance : Set Alterable Value(1095) to 0
+					Group.Instance : Set Alterable Value(1094) to 0
+					Group.Instance : Set Alterable Value(1093) to 0
+					Group.Instance : Set Alterable Value(1099) to 1
+					Special : Stop loop "instance_place_fix"
+
+		[ Instance AutoPlace ]
+
+			// AutoPlace 现在直接用于 Group.Instance，并用于进一步处理运动实心补正
+			// 
+			// 使用变量 500~599
+			// 本组不处理穿透实心
+			// 
+			// 500=0：启用
+			//       =其他：禁用
+			// 
+			// 501=0：寻找最优解
+			// 501=1：强制向上
+			// 501=2：强制向下
+			// 501=3：强制向左
+			// 501=4：强制向右
+			// 
+			// 502: 最大值（默认为 12）
+			// 
+			// 599：防穿墙标记
+			// 598：原始x坐标
+			// 597：原始y坐标
+			// 596：搜索遍历值
+			// 
+			// 优先级：上>下>左>右
+
+			* Alterable Value(1015) of Group.Instance = 1
+			+ Alterable Value(1002) of Group.Instance >= 0
+			+ Alterable Value(500) of Group.Instance = 0
+			+ Alterable Value(599) of Group.Instance = 0
+
+				+ Alterable Value(1011) of Group.Instance = 1
+				+ Alterable Value(100) of Group.Instance >= 0
+				  OR (logical)
+				+ Alterable Value(1012) of Group.Instance = 1
+				+ Alterable Value(200) of Group.Instance >= 0
+					Start loop for each one of Group.Instance, loop name "instance_place_fix_auto_detect"
+
+			* On each one of Group.Instance, loop name "instance_place_fix_auto_detect"
+
+				+ Group.Instance is overlapping a backdrop
+				  OR (logical)
+				+ Group.Instance is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.Instance is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1002 )
+					Group.Instance : Set Alterable Value(599) to 1
+
+			// 防穿墙
+
+			* Alterable Value(599) of Group.Instance = 1
+				Group.Instance : Set Alterable Value(598) to X( "Group.Instance" )
+				Group.Instance : Set Alterable Value(597) to Y( "Group.Instance" )
+				Start loop for each one of Group.Instance, loop name "instance_place_fix_auto"
+
+			// 第一帧不执行
+
+			* Alterable Value(1015) of Group.Instance = 0
+				Group.Instance : Set Alterable Value(1015) to 1
+				Group.Instance : Set Alterable Value(502) to 12
+
+			* On each one of Group.Instance, loop name "instance_place_fix_auto"
+				Group.Instance : Set Alterable Value(596) to 0
+				Group.Instance : Set Alterable Value(599) to 2
+
+				+ Always
+					Special : Start loop "instance_place_fix_auto_loop" Max(Max(AltValN( "Group.Instance", 502 ), Abs(AltValN( "Group.Instance", 351 ) - AltValN( "Group.Instance", 353 ))), Abs(AltValN( "Group.Instance", 352 ) - AltValN( "Group.Instance", 354 ))) times
+
+				+ Alterable Value(599) of Group.Instance = 2
+					Group.Instance : Set Alterable Value(1004) to 1
+					Group.Instance : Set X position to Alterable Value X( "Group.Instance" )
+					Group.Instance : Set Y position to Alterable Value Y( "Group.Instance" )
+					Group.Instance : Set Alterable Value(599) to 0
+					Group.Instance : Set Alterable Value(596) to 0
+
+			// 从四个方向同时进行搜索
+
+			* On loop "instance_place_fix_auto_loop"
+
+				+ Alterable Value(599) of Group.Instance = 2
+					Group.Instance : Add 1 to Alterable Value(596)
+
+				// 向上搜索
+
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 0
+				  OR (logical)
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 1
+					Group.Instance : Set Y position to AltValN( "Group.Instance", 597 ) - AltValN( "Group.Instance", 596 )
+					Group.Instance : Set Alterable Value(599) to 3
+
+					+ Group.Instance is overlapping a backdrop
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = 0
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1002 )
+						Group.Instance : Set Alterable Value(599) to 2
+
+				+ Alterable Value(599) of Group.Instance = 2
+					Group.Instance : Set Y position to AltValN( "Group.Instance", 597 )
+
+				// 向下搜索
+
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 0
+				  OR (logical)
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 2
+					Group.Instance : Set Y position to AltValN( "Group.Instance", 597 ) + AltValN( "Group.Instance", 596 )
+					Group.Instance : Set Alterable Value(599) to 3
+
+					+ Group.Instance is overlapping a backdrop
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = 0
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1002 )
+						Group.Instance : Set Alterable Value(599) to 2
+
+				+ Alterable Value(599) of Group.Instance = 2
+					Group.Instance : Set Y position to AltValN( "Group.Instance", 597 )
+
+				// 向左搜索
+
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 0
+				  OR (logical)
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 3
+					Group.Instance : Set X position to AltValN( "Group.Instance", 598 ) - AltValN( "Group.Instance", 596 )
+					Group.Instance : Set Alterable Value(599) to 3
+
+					+ Group.Instance is overlapping a backdrop
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = 0
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1002 )
+						Group.Instance : Set Alterable Value(599) to 2
+
+				+ Alterable Value(599) of Group.Instance = 2
+					Group.Instance : Set X position to AltValN( "Group.Instance", 598 )
+
+				// 向右搜索
+
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 0
+				  OR (logical)
+				+ Alterable Value(599) of Group.Instance = 2
+				+ Alterable Value(501) of Group.Instance = 4
+					Group.Instance : Set X position to AltValN( "Group.Instance", 598 ) + AltValN( "Group.Instance", 596 )
+					Group.Instance : Set Alterable Value(599) to 3
+
+					+ Group.Instance is overlapping a backdrop
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = 0
+					  OR (logical)
+					+ Group.Instance is overlapping Group.Solid
+					+ Alterable Value(900) of Group.Solid = AltValN( "Group.Instance", 1002 )
+						Group.Instance : Set Alterable Value(599) to 2
+
+				+ Alterable Value(599) of Group.Instance = 2
+					Group.Instance : Set X position to AltValN( "Group.Instance", 598 )
+
+			* On loop "instance_place_fix_auto_loop"
+			+ Alterable Value(599) of Group.Instance = 3
+				Group.Instance : Set Alterable Value X to X( "Group.Instance" )
+				Group.Instance : Set Alterable Value Y to Y( "Group.Instance" )
+				Group.Instance : Set Alterable Value(599) to 0
+				Group.Instance : Set Alterable Value(596) to 0
+				Special : Stop loop "instance_place_fix_auto_loop"
+
+		// Gravity 和 Movable 依赖此组
+
+		// 使用变量：1000~1099
+		// 1000=-1: 禁用该对象所有相关事件
+		//         = 0: 初始化，完成后赋值为 1
+		//         = 2: 恢复，完成后赋值1
+		// 需要注意的是，在编写物件行为的时候也应注意加上这个条件
+		// 
+		// 1001= 1: 下一帧即销毁（模拟绘制功能）
+		// 你可以创建一个 Instance，并将其变量 1001 赋值为 1，这样它在下一帧就会被销毁，从而达到“绘制”的目的；
+		// 但如果需要用的话，一定要节约！！！
+		// 
+		// 1002=-1: 不进行碰撞检测（对 Group.Gravity, Movable 等均适用）
+		//         = 0: 正常碰撞检测
+		//         = 1: 马里奥实心
+		//         = 2: 敌人实心
+		// 
+		// 1003= 0: 不禁用
+		//         = 1: 出屏禁用
+		//         = 2: 禁用直到入屏
+		// 
+		// 1004= 1: 被运动实心挤
+		// 
+		// 1005= 1: 调整图层至 level_back
+		// 
+		// 1011=1: 对象属于 Group.Gravity
+		// 1012=1: 对象属于 Group.Movable
+		// 1013=1: 对象属于 Group.MovingBlock
+		// 1014=1: 对象属于 Group.Enemy
+		//         =2: 对象属于 Group.Shell
+		//         =3: 对象属于 Group.HardShell
+		// 1016=1: 对象属于 Group.Block
+		//         =2: 对象属于 Group.PowerUp
+		// 1019=1: 对象属于 Group.Solid
+		//         =2: 对象属于 Group.Platform
+
+		// 统一采用变量X Y作为坐标变量，并调用初始化 foreach
+
+		* Alterable Value(1000) of Group.Instance = 0
+			Start loop for each one of Group.Instance, loop name "init"
+
+		* On each one of Group.Instance, loop name "init"
+			Group.Instance : Set Alterable Value X to X( "Group.Instance" )
+			Group.Instance : Set Alterable Value Y to Y( "Group.Instance" )
+			Group.Instance : Set Alterable Value(1000) to 1
+
+		// 绘制
+
+		* Alterable Value(1000) of Group.Instance <> -1
+		+ Alterable Value(1001) of Group.Instance = 1
+			Group.Instance : Destroy
+
+		// 被挤取消碰撞检测暂时禁止相关运动
+
+		* Alterable Value(1004) of Group.Instance = 1
+
+			+ Alterable Value(1011) of Group.Instance = 1
+				Group.Instance : Set Alterable Value(100) to -2
+
+			+ Alterable Value(1012) of Group.Instance = 1
+				Group.Instance : Set Alterable Value(200) to -2
+
+		// 自动禁用
+
+		* Alterable Value(1003) of Group.Instance = 1
+		+ Alterable Value(1000) of Group.Instance <> -1
+		+ Group.Instance is getting closer than 0 - Max(OWidth( "Group.Instance" ), OHeight( "Group.Instance" )) - 16 pixels from window's edge
+			Group.Instance : Set Alterable Value(1000) to -1
+			Group.Instance : Set Alterable Value(1003) to -1
+
+		* Alterable Value(1003) of Group.Instance = 2
+		+ Alterable Value(1000) of Group.Instance <> -1
+			Group.Instance : Set Alterable Value(1000) to -1
+			Group.Instance : Set Alterable Value(1003) to -2
+
+		// 禁用
+
+		* Alterable Value(1000) of Group.Instance = -1
+		+ Alterable Value(1020) of Group.Instance = 0
+			Group.Instance : Set Alterable Value(1020) to 1
+
+			+ Alterable Value(1011) of Group.Instance = 1
+				Group.Instance : Set Alterable Value(1021) to AltValN( "Group.Instance", 100 )
+				Group.Instance : Set Alterable Value(100) to -1
+
+			+ Alterable Value(1012) of Group.Instance = 1
+				Group.Instance : Set Alterable Value(1022) to AltValN( "Group.Instance", 200 )
+				Group.Instance : Set Alterable Value(200) to -1
+
+		// 自动恢复
+
+		* Alterable Value(1003) of Group.Instance = -1
+		+ NOT Group.Instance is getting closer than 0 - Max(OWidth( "Group.Instance" ), OHeight( "Group.Instance" )) - 16 pixels from window's edge
+			Group.Instance : Set Alterable Value(1000) to 2
+			Group.Instance : Set Alterable Value(1003) to 1
+
+		* Alterable Value(1003) of Group.Instance = -2
+		+ NOT Group.Instance is getting closer than 0 - Max(OWidth( "Group.Instance" ), OHeight( "Group.Instance" )) - 16 pixels from window's edge
+			Group.Instance : Set Alterable Value(1000) to 2
+			Group.Instance : Set Alterable Value(1003) to 0
+
+		// 恢复
+
+		* Alterable Value(1000) of Group.Instance = 2
+			Group.Instance : Set Alterable Value(100) to AltValN( "Group.Instance", 1021 )
+			Group.Instance : Set Alterable Value(200) to AltValN( "Group.Instance", 1022 )
+			Group.Instance : Set Alterable Value(1020) to 0
+			Group.Instance : Set Alterable Value(1000) to 1
+
+	[ Group.Block(var 600) ]
+
+		// 此处仅用于初始化，详细文档见后续
+
+		* Alterable Value(1016) of Group.Block = 0
+			Group.Block : Set Alterable Value(1016) to 1
+			Group.Block : Set Alterable Value(604) to 90
+			Group.Block : Set Alterable Value(605) to -1
+
+			+ Alterable Value(602) of Group.Block = 0
+				Start loop for each one of Group.Block, loop name "block_set_powerup"
+
+			+ Group.Block is overlapping Block Hidden
+			  OR (logical)
+			+ Group.Block is overlapping Block Once Hidden
+				Group.Block : Set Alterable Value(601) to -1
+				Group.Block : Set Alterable Value(900) to -1
+				Group.Block : Make invisible
+
+			+ Group.Block is overlapping Block Once Hidden
+			+ Death Hint of Globalvar = 1
+
+				+ Always
+					Start loop for each one of Group.Block, loop name "block_destroy_powerup"
+
+				+ Always
+					Group.Block : Destroy
+
+	[ Group.Gravity(var 100) ]
+
+		// 使用变量 100~199
+		// 
+		// 100=-1: 禁用
+		//       = 0: 在地面上
+		//       = 1: 在空中
+		// 
+		// 101：速度
+		// 102：重力方向（角度制）
+		// 103：空中加速度
+		// 104：空中减速度
+		// 105：水中加速度
+		// 106：水中减速度
+		// 107：空中最大速度（=0为无限制，<0为上浮）
+		// 108：水中最大速度（=0为无限制，<0为上浮）
+		// 
+		// 109= 0: 应用加速度
+		// 
+		// 180: 坦克滚屏相关
+		// 190: 用于变量比较
+
+		// 声明：我属于 Group.Gravity！！！
+
+		* On each one of Group.Gravity, loop name "init"
+			Group.Gravity : Set Alterable Value(1011) to 1
+
+			// 默认设置（敌人）
+
+			+ Always
+				Group.Gravity : Set Alterable Value(102) to 重力方向( "Gravity Default Settings" )
+				Group.Gravity : Set Alterable Value(103) to 空中加速度（百分之一）( "Gravity Default Settings" ) * 0.4 / 100.0
+				Group.Gravity : Set Alterable Value(104) to 空中减速度（百分之一）( "Gravity Default Settings" ) * 0.4 / 100.0
+				Group.Gravity : Set Alterable Value(105) to 水中加速度（百分之一）( "Gravity Default Settings" ) / 100.0
+				Group.Gravity : Set Alterable Value(106) to 水中减速度（百分之一）( "Gravity Default Settings" ) / 100.0
+				Group.Gravity : Set Alterable Value(107) to 空中最大速度( "Gravity Default Settings" )
+				Group.Gravity : Set Alterable Value(108) to 水中最大速度( "Gravity Default Settings" )
+
+			+ Alterable Value(100) of Group.Gravity >= 0
+			+ Alterable Value(1002) of Group.Gravity >= 0
+
+				+ Group.Gravity is overlapping a backdrop
+				  OR (logical)
+				+ Group.Gravity is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.Gravity is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.Gravity", 1002 )
+					Group.Gravity : Set Alterable Value(100) to -2
+
+		* Alterable Value(1000) of Group.Gravity <> -1
+			Group.Gravity : Set Alterable Value(1011) to 1
+
+		// 进入空中检测
+
+		* Always
+			Group.Gravity : Set Alterable Value(120) to Layer( "Group.Gravity" )
+
+		* Alterable Value(100) of Group.Gravity = 0
+
+			+ Alterable Value(101) of Group.Gravity <> 0
+				Group.Gravity : Set Alterable Value(100) to 1
+
+			+ Alterable Value(107) of Group.Gravity < 0
+			  OR (logical)
+			+ Alterable Value(108) of Group.Gravity < 0
+				Group.Gravity : Set Alterable Value(123) to 1
+
+				+ Group.Gravity is overlapping Group.Water
+					Group.Gravity : Set Alterable Value(123) to 0
+
+					+ Alterable Value(108) of Group.Gravity < 0
+						Group.Gravity : Set Alterable Value(100) to 1
+
+				+ Alterable Value(123) of Group.Gravity = 1
+				+ Alterable Value(107) of Group.Gravity < 0
+					Group.Gravity : Set Alterable Value(100) to 1
+
+		* Alterable Value(100) of Group.Gravity = 0
+		+ Alterable Value(1002) of Group.Gravity <> -1
+			Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+			Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+			Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+			Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+			Group.Gravity : Set Alterable Value(100) to 1
+			Start loop for each one of Group.Gravity, loop name "gravity_detect"
+
+		* On each one of Group.Gravity, loop name "gravity_detect"
+
+			+ Group.Gravity is overlapping a backdrop
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(100) to 0
+
+			+ Alterable Value(100) of Group.Gravity = 1
+
+				+ Group.Gravity is overlapping Group.Platform
+				+ Alterable Value(900) of Group.Platform = 0
+				  OR (logical)
+				+ Group.Gravity is overlapping Group.Platform
+				+ Alterable Value(900) of Group.Platform = AltValN( "Group.Gravity", 1002 )
+					Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+					Group.Gravity : Set Alterable Value(121) to 1
+					 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+					+ Always
+						Start loop for each one of Group.Platform, loop name "platform_detect"
+
+					+ Always
+						 Group.Gravity : Move to layer AltValN( "Group.Gravity", 120 )
+						Group.Gravity : Set Alterable Value(121) to 2
+
+			+ Alterable Value(121) of Group.Gravity = 0
+				Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+				Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+				Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+				Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+			+ Alterable Value(121) of Group.Gravity = 2
+				Group.Gravity : Set Alterable Value(121) to 0
+
+		* On each one of Group.Platform, loop name "platform_detect"
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+			+ Alterable Value(121) of Group.Gravity = 1
+			+ NOT Group.Gravity is overlapping Group.Platform
+				Group.Gravity : Set Alterable Value(100) to 0
+
+			+ Alterable Value(121) of Group.Gravity = 1
+				 Group.Platform : Move to layer AltValN( "Group.Gravity", 120 )
+
+		// Group.Movable 下斜坡
+
+		* Alterable Value(100) of Group.Movable = 1
+		+ Alterable Value(101) of Group.Movable = 0
+		+ Alterable Value(1002) of Group.Movable <> -1
+		+ Alterable Value(201) of Group.Movable > 0
+		+ Alterable Value(205) of Group.Movable > 0
+			Group.Movable : Add ( AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 ) ) * Cos(AltValN( "Group.Movable", 102 )) to Alterable Value X
+			Group.Movable : Add 0 - ( AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 ) ) * Sin(AltValN( "Group.Movable", 102 )) to Alterable Value Y
+			Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+			Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+			Start loop for each one of Group.Movable, loop name "movable_gravity_detect"
+
+		* On each one of Group.Movable, loop name "movable_gravity_detect"
+
+			+ Group.Movable is overlapping a backdrop
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1096) to 1
+				Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 102 ) + 180
+				Group.Movable : Set Alterable Value(1094) to AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 )
+
+				+ Always
+					Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+				+ Alterable Value(1099) of Group.Movable = 1
+					Group.Movable : Set Alterable Value(1099) to 0
+					Group.Movable : Set Alterable Value(100) to 0
+
+			+ Group.Movable is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = AltValN( "Group.Movable", 1002 )
+				Start loop for each one of Group.Movable, loop name "movable_slope_down"
+
+			+ Alterable Value(100) of Group.Movable = 1
+				Group.Movable : Add 0 - ( AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 ) ) * Cos(AltValN( "Group.Movable", 102 )) to Alterable Value X
+				Group.Movable : Add ( AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 ) ) * Sin(AltValN( "Group.Movable", 102 )) to Alterable Value Y
+				Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+				Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+
+		* On each one of Group.Movable, loop name "movable_slope_down"
+
+			+ Group.Movable is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(223) to 1
+				 Group.Movable : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Always
+					Start loop for each one of Group.Platform, loop name "platform_slope_down"
+
+				+ Always
+					 Group.Movable : Move to layer AltValN( "Group.Movable", 120 )
+					Group.Movable : Set Alterable Value(223) to 0
+
+		* On each one of Group.Platform, loop name "platform_slope_down"
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+			+ Alterable Value(223) of Group.Movable = 1
+				Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 102 ) + 180
+				Group.Movable : Set Alterable Value(1094) to AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 )
+
+				+ Always
+					Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+				+ Alterable Value(1099) of Group.Movable = 1
+					Group.Movable : Set Alterable Value(100) to 0
+					Group.Movable : Set Alterable Value(1099) to 0
+					Start loop for each one of Group.Movable, loop name "movable_slope_down_head"
+
+			+ Alterable Value(223) of Group.Movable = 1
+				 Group.Platform : Move to layer AltValN( "Group.Movable", 120 )
+
+		* On each one of Group.Movable, loop name "movable_slope_down_head"
+			 Group.Movable : Move to layer AltValN( "Group.Movable", 120 )
+
+			+ Group.Movable is overlapping a backdrop
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1096) to 1
+				Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 102 )
+				Group.Movable : Set Alterable Value(1093) to 1
+				Group.Movable : Set Alterable Value(101) to 0
+				Group.Movable : Set Alterable Value(100) to 1
+
+				+ Always
+					Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+				+ Always
+					Group.Movable : Set Alterable Value(1099) to 0
+
+			+ Always
+				 Group.Movable : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+		// 应用加速度
+
+		* Alterable Value(100) of Group.Gravity = 1
+		+ Alterable Value(109) of Group.Gravity = 0
+			Group.Gravity : Set Alterable Value(123) to 1
+
+			+ Group.Gravity is overlapping Group.Water
+				Group.Gravity : Set Alterable Value(123) to 0
+
+				+ Alterable Value(108) of Group.Gravity <> 0
+					Group.Gravity : Set Alterable Value(190) to AltValN( "Group.Gravity", 101 ) - AltValN( "Group.Gravity", 108 )
+
+					+ Alterable Value(190) of Group.Gravity < 0
+						Group.Gravity : Add AltValN( "Group.Gravity", 105 ) to Alterable Value(101)
+
+					+ Alterable Value(190) of Group.Gravity > 0
+						Group.Gravity : Add 0 - AltValN( "Group.Gravity", 106 ) to Alterable Value(101)
+
+				+ Alterable Value(108) of Group.Gravity = 0
+					Group.Gravity : Add AltValN( "Group.Gravity", 105 ) to Alterable Value(101)
+
+			+ Alterable Value(123) of Group.Gravity = 1
+
+				+ Alterable Value(107) of Group.Gravity <> 0
+					Group.Gravity : Set Alterable Value(190) to AltValN( "Group.Gravity", 101 ) - AltValN( "Group.Gravity", 107 )
+
+					+ Alterable Value(190) of Group.Gravity < 0
+						Group.Gravity : Add AltValN( "Group.Gravity", 103 ) to Alterable Value(101)
+
+					+ Alterable Value(190) of Group.Gravity > 0
+						Group.Gravity : Add 0 - AltValN( "Group.Gravity", 104 ) to Alterable Value(101)
+
+				+ Alterable Value(107) of Group.Gravity = 0
+					Group.Gravity : Add AltValN( "Group.Gravity", 103 ) to Alterable Value(101)
+
+		// 应用速度
+
+		* Alterable Value(100) of Group.Gravity = 1
+			Group.Gravity : Add AltValN( "Group.Gravity", 101 ) * Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+			Group.Gravity : Add 0 - AltValN( "Group.Gravity", 101 ) * Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+			Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+			Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+		// 碰撞检测
+
+		* Alterable Value(100) of Group.Gravity = 1
+		+ Alterable Value(1002) of Group.Gravity <> -1
+
+			+ Alterable Value(101) of Group.Gravity < 0
+
+				+ Alterable Value(699) of Group.Gravity = 1
+					Start loop for each one of Group.Gravity, loop name "gravity_up_detect_block"
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "gravity_up_detect"
+
+			+ Alterable Value(101) of Group.Gravity > 0
+
+				+ Alterable Value(698) of Group.Gravity = 1
+					Start loop for each one of Group.Gravity, loop name "gravity_down_detect_block"
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "gravity_down_detect"
+
+		* On each one of Group.Gravity, loop name "gravity_up_detect"
+
+			+ Group.Gravity is overlapping a backdrop
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1098) to AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1096) to 1
+				Group.Gravity : Set Alterable Value(1095) to AltValN( "Group.Gravity", 102 )
+				Group.Gravity : Set Alterable Value(1093) to 1
+				Group.Gravity : Set Alterable Value(101) to 0
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "instance_place_fix"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(1099) to 0
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "gravity_up_finished"
+
+		* On each one of Group.Gravity, loop name "gravity_down_detect"
+
+			+ Group.Gravity is overlapping a backdrop
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1098) to AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1096) to 1
+				Group.Gravity : Set Alterable Value(1095) to AltValN( "Group.Gravity", 102 ) + 180
+				Group.Gravity : Set Alterable Value(1093) to 1
+				Group.Gravity : Set Alterable Value(101) to 0
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "instance_place_fix"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(100) to 0
+					Group.Gravity : Set Alterable Value(1099) to 0
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "gravity_down_finished"
+
+			+ Group.Gravity is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = 0
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = AltValN( "Group.Gravity", 1002 )
+				Start loop for each one of Group.Gravity, loop name "gravity_land"
+
+		* On each one of Group.Gravity, loop name "gravity_land"
+
+			+ Group.Gravity is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = 0
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(122) to 1
+				 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Always
+					Start loop for each one of Group.Platform, loop name "platform_land"
+
+				+ Always
+					 Group.Gravity : Move to layer AltValN( "Group.Gravity", 120 )
+					Group.Gravity : Set Alterable Value(122) to 0
+
+				+ Alterable Value(100) of Group.Gravity = 0
+					Start loop for each one of Group.Gravity, loop name "gravity_down_finished"
+
+		* On each one of Group.Platform, loop name "platform_land"
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+			+ Alterable Value(122) of Group.Gravity = 1
+			+ Alterable Value(100) of Group.Gravity = 1
+				Group.Gravity : Set Alterable Value(1098) to AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1095) to AltValN( "Group.Gravity", 102 ) + 180
+				Group.Gravity : Set Alterable Value(1094) to Ceil(AltValN( "Group.Gravity", 101 ))
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "instance_place_fix"
+
+				+ Alterable Value(1099) of Group.Gravity = 1
+					Group.Gravity : Set Alterable Value(100) to 0
+					Group.Gravity : Set Alterable Value(101) to 0
+					Group.Gravity : Set Alterable Value(1099) to 0
+					Start loop for each one of Group.Gravity, loop name "gravity_land_head"
+
+			+ Alterable Value(122) of Group.Gravity = 1
+				 Group.Platform : Move to layer AltValN( "Group.Gravity", 120 )
+
+		* On each one of Group.Gravity, loop name "gravity_land_head"
+			 Group.Gravity : Move to layer AltValN( "Group.Gravity", 120 )
+
+			+ Group.Gravity is overlapping a backdrop
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1098) to AltValN( "Group.Gravity", 1002 )
+				Group.Gravity : Set Alterable Value(1096) to 1
+				Group.Gravity : Set Alterable Value(1095) to AltValN( "Group.Gravity", 102 )
+				Group.Gravity : Set Alterable Value(1093) to 1
+				Group.Gravity : Set Alterable Value(101) to 0
+				Group.Gravity : Set Alterable Value(100) to 1
+
+				+ Always
+					Start loop for each one of Group.Gravity, loop name "instance_place_fix"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(1099) to 0
+
+				+ Alterable Value(1012) of Group.Gravity = 1
+					Group.Gravity : Set Alterable Value(225) to 1
+
+			+ Always
+				 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+		// MovingBlock 踩上记录
+
+		* Alterable Value(100) of Group.Gravity = 0
+		+ Alterable Value(1002) of Group.Gravity <> -1
+			Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+			Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+			Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+			Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+			Start loop for each one of Group.Gravity, loop name "gravity_movingblock_detect"
+
+		* On each one of Group.Gravity, loop name "gravity_movingblock_detect"
+
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			+ Alterable Value(1013) of Group.Solid = 1
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Gravity", 1002 )
+			+ Alterable Value(1013) of Group.Solid = 1
+				Group.Gravity : Set Alterable Value(121) to 3
+
+				+ Always
+					Start loop for each one of Group.Solid, loop name "solid_movingblock_detect"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(121) to 0
+
+			+ Group.Gravity is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = 0
+			+ Alterable Value(1013) of Group.Platform = 1
+			  OR (logical)
+			+ Group.Gravity is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = AltValN( "Group.Gravity", 1002 )
+			+ Alterable Value(1013) of Group.Platform = 1
+				Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+				Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+				Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+				Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+				Group.Gravity : Set Alterable Value(121) to 4
+				 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Always
+					Start loop for each one of Group.Platform, loop name "platform_movingblock_detect"
+
+				+ Always
+					 Group.Gravity : Move to layer AltValN( "Group.Gravity", 120 )
+					Group.Gravity : Set Alterable Value(121) to 5
+
+			+ Alterable Value(121) of Group.Gravity = 0
+				Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+				Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+				Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+				Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+			+ Alterable Value(121) of Group.Gravity = 5
+				Group.Gravity : Set Alterable Value(121) to 0
+
+		* On each one of Group.Solid, loop name "solid_movingblock_detect"
+
+			+ Alterable Value(121) of Group.Gravity = 3
+				Group.Solid : Add 1 to Alterable Value(30000)
+				Group.Solid : Set Alterable Value(30000 + AltValN( "Group.Solid", 30000 )) to Fixed( "Group.Gravity" )
+
+		* On each one of Group.Platform, loop name "platform_movingblock_detect"
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+			+ Alterable Value(121) of Group.Gravity = 4
+			+ NOT Group.Gravity is overlapping Group.Platform
+				Group.Platform : Add 1 to Alterable Value(30000)
+				Group.Platform : Set Alterable Value(30000 + AltValN( "Group.Platform", 30000 )) to Fixed( "Group.Gravity" )
+
+			+ Alterable Value(121) of Group.Gravity = 4
+				 Group.Platform : Move to layer AltValN( "Group.Gravity", 120 )
+
+		// 初始化被实心卡住
+
+		* Alterable Value(100) of Group.Gravity = -2
+			Group.Gravity : Set Alterable Value(100) to 0
+
+	[ Group.Movable(var 200) ]
+
+		// 使用变量 200~299
+		// 
+		// 200=-1: 禁用
+		// 
+		// 201：速度
+		// 202：移动方向（角度制）
+		// 
+		// 203：碰撞行为
+		// =-1：什么都不发生
+		// = 0：停止，速度（201）归 0
+		// = 1：反向（方向角+180）
+		// = 2：返回 204 = 1，后续处理交由物件
+		// 
+		// 205：斜坡容错
+
+		// 声明：我属于 Group.Movable！！！
+
+		* On each one of Group.Movable, loop name "init"
+			Group.Movable : Set Alterable Value(1012) to 1
+
+			+ Alterable Value(200) of Group.Movable >= 0
+			+ Alterable Value(1002) of Group.Movable >= 0
+
+				+ Group.Movable is overlapping a backdrop
+				  OR (logical)
+				+ Group.Movable is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.Movable is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.Movable", 1002 )
+					Group.Movable : Set Alterable Value(200) to -2
+
+		* Alterable Value(1000) of Group.Movable <> -1
+			Group.Movable : Set Alterable Value(1012) to 1
+
+		// 移动
+
+		* Alterable Value(200) of Group.Movable = 0
+			Group.Movable : Add AltValN( "Group.Movable", 201 ) * Cos(AltValN( "Group.Movable", 202 )) to Alterable Value X
+			Group.Movable : Add 0 - AltValN( "Group.Movable", 201 ) * Sin(AltValN( "Group.Movable", 202 )) to Alterable Value Y
+			Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+			Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+
+		// 碰撞检测
+
+		* Always
+			Group.Movable : Set Alterable Value(220) to Layer( "Group.Movable" )
+
+		* Alterable Value(200) of Group.Movable = 0
+		+ Alterable Value(201) of Group.Movable <> 0
+		+ Alterable Value(1002) of Group.Movable <> -1
+
+			+ Alterable Value(689) of Group.Movable = 1
+				Start loop for each one of Group.Movable, loop name "movable_detect_block"
+
+			+ Always
+				Group.Movable : Set Alterable Value(221) to 0
+				Start loop for each one of Group.Movable, loop name "movable_detect"
+
+		* On each one of Group.Movable, loop name "movable_detect"
+
+			+ Group.Movable is overlapping a backdrop
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Movable", 1002 )
+
+				+ Alterable Value(1011) of Group.Movable = 1
+				+ Alterable Value(205) of Group.Movable > 0
+				+ Alterable Value(100) of Group.Movable = 0
+				  OR (logical)
+				+ Alterable Value(1011) of Group.Movable = 1
+				+ Alterable Value(205) of Group.Movable > 0
+				+ Alterable Value(100) of Group.Movable = 1
+				+ Alterable Value(101) of Group.Movable >= 0
+				  OR (logical)
+				+ Alterable Value(1011) of Group.Movable = 1
+				+ Alterable Value(205) of Group.Movable > 0
+				+ Alterable Value(225) of Group.Movable = 1
+					Group.Movable : Set Alterable Value(225) to 0
+					Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+					Group.Movable : Set Alterable Value(1096) to 1
+					Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 102 ) + 180
+					Group.Movable : Set Alterable Value(1094) to AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 )
+
+					+ Always
+						Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+					+ Alterable Value(1099) of Group.Movable = 1
+						Group.Movable : Set Alterable Value(1099) to 0
+						Group.Movable : Set Alterable Value(221) to 1
+
+				+ Alterable Value(221) of Group.Movable = 0
+					Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+					Group.Movable : Set Alterable Value(1096) to 1
+					Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 202 ) + 180
+					Group.Movable : Set Alterable Value(1093) to 1
+
+					+ Always
+						Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+					+ Always
+						Group.Movable : Set Alterable Value(1099) to 0
+
+					+ Always
+						Start loop for each one of Group.Movable, loop name "movable_place_finished"
+
+					+ Alterable Value(203) of Group.Movable = 0
+						Group.Movable : Set Alterable Value(201) to 0
+
+					+ Alterable Value(203) of Group.Movable = 1
+						Group.Movable : Add 180 to Alterable Value(202)
+						Group.Movable : Set Alterable Value(202) to AltValN( "Group.Movable", 202 ) mod 360
+
+					+ Alterable Value(203) of Group.Movable = 2
+						Group.Movable : Set Alterable Value(204) to 1
+
+			+ Alterable Value(1011) of Group.Movable = 1
+			+ Alterable Value(205) of Group.Movable > 0
+			+ Alterable Value(100) of Group.Movable = 0
+			  OR (logical)
+			+ Alterable Value(1011) of Group.Movable = 1
+			+ Alterable Value(205) of Group.Movable > 0
+			+ Alterable Value(225) of Group.Movable = 1
+
+				+ Group.Movable is overlapping Group.Platform
+				+ Alterable Value(900) of Group.Platform = 0
+				  OR (logical)
+				+ Group.Movable is overlapping Group.Platform
+				+ Alterable Value(900) of Group.Platform = AltValN( "Group.Movable", 1002 )
+					Group.Movable : Set Alterable Value(225) to 0
+					Group.Movable : Set Alterable Value(223) to X( "Group.Movable" )
+					Group.Movable : Set Alterable Value(224) to Y( "Group.Movable" )
+					Start loop for each one of Group.Movable, loop name "movable_slope_up"
+
+			+ Alterable Value(221) of Group.Movable = 2
+				Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 202 ) + 180
+				Group.Movable : Set Alterable Value(1093) to 1
+
+				+ Always
+					Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+				+ Always
+					Group.Movable : Set Alterable Value(1099) to 0
+
+				+ Always
+					Start loop for each one of Group.Movable, loop name "movable_place_finished"
+
+				+ Alterable Value(203) of Group.Movable = 0
+					Group.Movable : Set Alterable Value(201) to 0
+
+				+ Alterable Value(203) of Group.Movable = 1
+					Group.Movable : Add 180 to Alterable Value(202)
+					Group.Movable : Set Alterable Value(202) to AltValN( "Group.Movable", 202 ) mod 360
+
+				+ Alterable Value(203) of Group.Movable = 2
+					Group.Movable : Set Alterable Value(204) to 1
+
+		* On each one of Group.Movable, loop name "movable_slope_up"
+
+			+ Group.Movable is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Platform
+			+ Alterable Value(900) of Group.Platform = AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(222) to 1
+				 Group.Movable : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Always
+					Start loop for each one of Group.Platform, loop name "platform_slope_up"
+
+				+ Always
+					 Group.Movable : Move to layer AltValN( "Group.Movable", 220 )
+					Group.Movable : Set Alterable Value(222) to 0
+
+		* On each one of Group.Platform, loop name "platform_slope_up"
+			 Group.Platform : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+			+ Alterable Value(222) of Group.Movable = 1
+				Group.Movable : Set Alterable Value(1098) to AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value(1095) to AltValN( "Group.Movable", 102 ) + 180
+				Group.Movable : Set Alterable Value(1094) to Ceil(AltValN( "Group.Movable", 201 ) + AltValN( "Group.Movable", 205 ))
+
+				+ Always
+					Start loop for each one of Group.Movable, loop name "instance_place_fix"
+
+				+ Alterable Value(1099) of Group.Movable = 1
+					Group.Movable : Set Alterable Value(1099) to 0
+					Start loop for each one of Group.Movable, loop name "movable_slope_up_head"
+
+			+ Alterable Value(222) of Group.Movable = 1
+				 Group.Platform : Move to layer AltValN( "Group.Movable", 220 )
+
+		* On each one of Group.Movable, loop name "movable_slope_up_head"
+			 Group.Movable : Move to layer AltValN( "Group.Movable", 220 )
+
+			+ Group.Movable is overlapping a backdrop
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = 0
+			  OR (logical)
+			+ Group.Movable is overlapping Group.Solid
+			+ Alterable Value(900) of Group.Solid = AltValN( "Group.Movable", 1002 )
+				Group.Movable : Set Alterable Value X to AltValN( "Group.Movable", 223 )
+				Group.Movable : Set Alterable Value Y to AltValN( "Group.Movable", 224 )
+				Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+				Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+				Group.Movable : Set Alterable Value(221) to 2
+
+			+ Always
+				 Group.Movable : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+		// 初始化被实心卡住
+
+		* Alterable Value(200) of Group.Movable = -2
+			Group.Movable : Set Alterable Value(200) to 0
+
+	[ Group.Enemy & Shell(var 400) ]
+
+		// 400=0: 正常
+		//       =1: 死亡
+		// 
+		// 401=-2: 不与龟壳和无敌星进行判定
+		//       =-1: 不与龟壳进行判定
+		//       = 0: 能被普通龟壳砸死
+		//       = 1: 能反死普通龟壳但能被硬壳砸死
+		// 
+		// 402=0: 能被岩浆搞死
+		// 404=0: 出界销毁
+		// 405=0: 能被挤死
+		// 406=0: 能被顶死（有重力且在地面上时）
+		// 
+		// 403=1: 位于 level_back 图层的调整
+
+		// 声明
+
+		* On each one of Group.Enemy, loop name "init"
+			Group.Enemy : Set Alterable Value(1014) to 1
+
+		* Alterable Value(1000) of Group.Enemy <> -1
+			Group.Enemy : Set Alterable Value(1014) to 1
+
+		* On each one of Group.Shell, loop name "init"
+			Group.Shell : Set Alterable Value(1014) to 2
+
+		* Alterable Value(1000) of Group.Shell <> -1
+			Group.Shell : Set Alterable Value(1014) to 2
+
+		* On each one of Group.HardShell, loop name "init"
+			Group.HardShell : Set Alterable Value(1014) to 3
+
+		* Alterable Value(1000) of Group.HardShell <> -1
+			Group.HardShell : Set Alterable Value(1014) to 3
+
+		// 两两碰撞转向
+
+		* Collision between Group.EnemyTurn and Group.EnemyTurn
+			Start loop for each one of Group.EnemyTurn, loop name "enemyturn_set"
+
+		* On each one of Group.EnemyTurn, loop name "enemyturn_set"
+
+			+ Alterable Value(1012) of Group.EnemyTurn = 0
+				Group.EnemyTurn : Add 180 to Alterable Value(202)
+
+			+ Alterable Value(1012) of Group.EnemyTurn = 1
+
+				+ Alterable Value(203) of Group.EnemyTurn = 0
+					Group.EnemyTurn : Set Alterable Value(201) to 0
+
+				+ Alterable Value(203) of Group.EnemyTurn = 1
+					Group.EnemyTurn : Add 180 to Alterable Value(202)
+
+				+ Alterable Value(203) of Group.EnemyTurn = 2
+					Group.EnemyTurn : Set Alterable Value(204) to 1
+
+		// 出界销毁
+
+		* Alterable Value(400) of Group.Enemy = 0
+		+ Alterable Value(404) of Group.Enemy = 0
+
+			+ Y position of Group.Enemy >= Frame Height + 256
+			  OR (logical)
+			+ X position of Group.Enemy <= -256
+			  OR (logical)
+			+ X position of Group.Enemy >= Frame Width + 256
+				Group.Enemy : Destroy
+
+		* Alterable Value(400) of Group.Shell = 0
+		+ Alterable Value(404) of Group.Shell = 0
+
+			+ Y position of Group.Shell >= Frame Height + 256
+			  OR (logical)
+			+ X position of Group.Shell <= -256
+			  OR (logical)
+			+ X position of Group.Shell >= Frame Width + 256
+				Group.Shell : Destroy
+
+		* Alterable Value(400) of Group.HardShell = 0
+		+ Alterable Value(404) of Group.HardShell = 0
+
+			+ Y position of Group.HardShell >= Frame Height + 256
+			  OR (logical)
+			+ X position of Group.HardShell <= -256
+			  OR (logical)
+			+ X position of Group.HardShell >= Frame Width + 256
+				Group.HardShell : Destroy
+
+		// 岩浆
+
+		* Group.Lava is overlapping Group.Enemy
+		+ Alterable Value(400) of Group.Enemy = 0
+		+ Alterable Value(402) of Group.Enemy = 0
+			Group.Enemy : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		* Group.Lava is overlapping Group.Shell
+		+ Alterable Value(400) of Group.Shell = 0
+		+ Alterable Value(402) of Group.Shell = 0
+			Group.Shell : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		* Group.Lava is overlapping Group.HardShell
+		+ Alterable Value(400) of Group.HardShell = 0
+		+ Alterable Value(402) of Group.HardShell = 0
+			Group.HardShell : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		// 挤死
+
+		* Alterable Value(1004) of Group.Enemy = 1
+		+ Alterable Value(400) of Group.Enemy = 0
+		+ Alterable Value(405) of Group.Enemy = 0
+			Group.Enemy : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		* Alterable Value(1004) of Group.Shell = 1
+		+ Alterable Value(400) of Group.Shell = 0
+		+ Alterable Value(405) of Group.Shell = 0
+			Group.Shell : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		* Alterable Value(1004) of Group.HardShell = 1
+		+ Alterable Value(400) of Group.HardShell = 0
+		+ Alterable Value(405) of Group.HardShell = 0
+			Group.HardShell : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		// 顶死
+
+		* Bump Attack is overlapping Group.Enemy
+		+ Alterable Value(406) of Group.Enemy = 0
+		+ Alterable Value(400) of Group.Enemy = 0
+		+ Alterable Value(1011) of Group.Enemy = 1
+		+ Alterable Value(100) of Group.Enemy = 0
+			Group.Enemy : Set Alterable Value(400) to 1
+			New Objects : Create Score 100 at (0,0) from Group.Enemy
+			Sound : Play sample kick_2
+
+		* Bump Attack is overlapping Group.Shell
+		+ Alterable Value(406) of Group.Shell = 0
+		+ Alterable Value(400) of Group.Shell = 0
+		+ Alterable Value(1011) of Group.Shell = 1
+		+ Alterable Value(100) of Group.Shell = 0
+		+ Group.Shell is overlapping Bump Attack
+			Group.Shell : Set Alterable Value(400) to 1
+			New Objects : Create Score 100 at (0,0) from Group.Shell
+			Sound : Play sample kick_2
+
+		* Bump Attack is overlapping Group.HardShell
+		+ Alterable Value(406) of Group.HardShell = 0
+		+ Alterable Value(400) of Group.HardShell = 0
+		+ Alterable Value(1011) of Group.HardShell = 1
+		+ Alterable Value(100) of Group.HardShell = 0
+		+ Group.HardShell is overlapping Bump Attack
+			Group.HardShell : Set Alterable Value(400) to 1
+			New Objects : Create Score 100 at (0,0) from Group.HardShell
+			Sound : Play sample kick_2
+
+		// 龟壳攻击 & 刷分
+
+		* Group.Shell is overlapping Group.Enemy
+		+ Alterable Value(400) of Group.Enemy = 0
+
+			+ Alterable Value(401) of Group.Enemy = 0
+				Group.Enemy : Set Alterable Value(400) to 1
+				Start loop for each one of Group.Shell, loop name "刷分"
+
+			+ Alterable Value(401) of Group.Enemy = 1
+				Group.Shell : Set Alterable Value(400) to 1
+				Sound : Play sample kick_2
+
+		* Collision between Group.Shell and Group.Shell
+			Group.Shell : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		// 刷分
+
+		* On each one of Group.Shell, loop name "刷分"
+			Group.Shell : Add 1 to Alterable Value(410)
+
+			+ Alterable Value(410) of Group.Shell = 1
+				New Objects : Create Score 100 at (0,0) from Group.Shell
+				Sound : Play sample kick_2
+
+			+ Alterable Value(410) of Group.Shell = 2
+				New Objects : Create Score 200 at (0,0) from Group.Shell
+				Sound : Play sample kick_3
+
+			+ Alterable Value(410) of Group.Shell = 3
+				New Objects : Create Score 500 at (0,0) from Group.Shell
+				Sound : Play sample kick_4
+
+			+ Alterable Value(410) of Group.Shell = 4
+				New Objects : Create Score 1000 at (0,0) from Group.Shell
+				Sound : Play sample kick_5
+
+			+ Alterable Value(410) of Group.Shell = 5
+				New Objects : Create Score 2000 at (0,0) from Group.Shell
+				Sound : Play sample kick_6
+
+			+ Alterable Value(410) of Group.Shell = 6
+				New Objects : Create Score 5000 at (0,0) from Group.Shell
+				Sound : Play sample kick_7
+
+			+ Alterable Value(410) of Group.Shell = 7
+				New Objects : Create Score 1up at (0,0) from Group.Shell
+				Sound : Play sample kick_8
+				Group.Shell : Set Alterable Value(410) to 0
+
+		// 硬壳攻击 & 刷分
+
+		* Group.HardShell is overlapping Group.Enemy
+		+ Alterable Value(400) of Group.Enemy = 0
+		+ Alterable Value(401) of Group.Enemy >= 0
+			Group.Enemy : Set Alterable Value(400) to 1
+			Start loop for each one of Group.HardShell, loop name "刷分"
+
+		* Group.HardShell is overlapping Group.Shell
+		+ Alterable Value(400) of Group.Shell = 0
+		+ Alterable Value(401) of Group.Shell >= 0
+			Group.Shell : Set Alterable Value(400) to 1
+			Start loop for each one of Group.HardShell, loop name "刷分"
+
+		* Collision between Group.HardShell and Group.HardShell
+			Group.HardShell : Set Alterable Value(400) to 1
+			Sound : Play sample kick_2
+
+		// 刷分
+
+		* On each one of Group.HardShell, loop name "刷分"
+			Group.HardShell : Add 1 to Alterable Value(410)
+
+			+ Alterable Value(410) of Group.HardShell = 1
+				New Objects : Create Score 100 at (0,0) from Group.HardShell
+				Sound : Play sample kick_2
+
+			+ Alterable Value(410) of Group.HardShell = 2
+				New Objects : Create Score 200 at (0,0) from Group.HardShell
+				Sound : Play sample kick_3
+
+			+ Alterable Value(410) of Group.HardShell = 3
+				New Objects : Create Score 500 at (0,0) from Group.HardShell
+				Sound : Play sample kick_4
+
+			+ Alterable Value(410) of Group.HardShell = 4
+				New Objects : Create Score 1000 at (0,0) from Group.HardShell
+				Sound : Play sample kick_5
+
+			+ Alterable Value(410) of Group.HardShell = 5
+				New Objects : Create Score 2000 at (0,0) from Group.HardShell
+				Sound : Play sample kick_6
+
+			+ Alterable Value(410) of Group.HardShell = 6
+				New Objects : Create Score 5000 at (0,0) from Group.HardShell
+				Sound : Play sample kick_7
+
+			+ Alterable Value(410) of Group.HardShell = 7
+				New Objects : Create Score 1up at (0,0) from Group.HardShell
+				Sound : Play sample kick_8
+				Group.HardShell : Set Alterable Value(410) to 0
+
+		// 无敌星 & 刷分
+
+		* Alterable Value AH of Mario = 2
+		+ Alterable Value(1000) of Mario <> -1
+		+ Mario is overlapping Group.Enemy
+		+ Alterable Value(400) of Group.Enemy = 0
+		+ Alterable Value(401) of Group.Enemy <> -2
+			Group.Enemy : Set Alterable Value(400) to 1
+			Start loop for each one of Mario, loop name "刷分"
+
+		* Alterable Value AH of Mario = 2
+		+ Alterable Value(1000) of Mario <> -1
+		+ Mario is overlapping Group.Shell
+		+ Alterable Value(400) of Group.Shell = 0
+		+ Alterable Value(401) of Group.Shell <> -2
+			Group.Shell : Set Alterable Value(400) to 1
+			Start loop for each one of Mario, loop name "刷分"
+
+		* Alterable Value AH of Mario = 2
+		+ Alterable Value(1000) of Mario <> -1
+		+ Mario is overlapping Group.HardShell
+		+ Alterable Value(400) of Group.HardShell = 0
+		+ Alterable Value(401) of Group.HardShell <> -2
+			Group.HardShell : Set Alterable Value(400) to 1
+			Start loop for each one of Mario, loop name "刷分"
+
+		* On each one of Mario, loop name "刷分"
+			Mario : Add 1 to Alterable Value AJ
+
+			+ Alterable Value AJ of Mario = 1
+				New Objects : Create Score 100 at (0,0) from Mario
+				Sound : Play sample kick_2
+
+			+ Alterable Value AJ of Mario = 2
+				New Objects : Create Score 200 at (0,0) from Mario
+				Sound : Play sample kick_3
+
+			+ Alterable Value AJ of Mario = 3
+				New Objects : Create Score 500 at (0,0) from Mario
+				Sound : Play sample kick_4
+
+			+ Alterable Value AJ of Mario = 4
+				New Objects : Create Score 1000 at (0,0) from Mario
+				Sound : Play sample kick_5
+
+			+ Alterable Value AJ of Mario = 5
+				New Objects : Create Score 2000 at (0,0) from Mario
+				Sound : Play sample kick_6
+
+			+ Alterable Value AJ of Mario = 6
+				New Objects : Create Score 5000 at (0,0) from Mario
+				Sound : Play sample kick_7
+
+			+ Alterable Value AJ of Mario = 7
+				New Objects : Create Score 1up at (0,0) from Mario
+				Sound : Play sample kick_8
+				Mario : Set Alterable Value AJ to 0
+
+	[ Group.Solid & Platform(var 900) ]
+
+		// 属于 Group.Solid & Platform 的对象不应该属于其他组，否则碰撞检测会失效（CTF 的 bug）
+		// 然而这里仍然有声明事件
+		// 组 Instance 中也仍然提供了自动禁用的选项
+		// 以作备用
+		// 
+		// 如果你有非常迫切的需求，可以尝试自行修改大部分相关碰撞检测事件，思路如下：
+		// 1. 移动 Group.Solid & Platform 对象和待检测对象至图层 "sys_overlap"
+		// 2. Group.Solid & Platform 对象执行: add backdrop as obstacle
+		// 3. 待检测对象使用 overlapping backdrop 条件进行检测
+		// 4. delete all created backdrop in layer "sys_overlap" 并将两个对象移回原图层
+		// 
+		// 如你所见，这个过程非常繁琐
+		// 而且性能非常低下
+		// 所以我没有采用这种模式
+		// 总之，Clickteam 傻贲
+
+		// 使用变量 900~999
+		// 900=-1: 禁用
+		//       = 0: 普通实心
+		//       = 1: 马里奥实心
+		//       = 2: 敌人实心
+		// 
+		// 901= 1: 调整图层至 level_back
+
+		// 声明：我属于 Group.Solid & Platform！！！
+
+		* On each one of Group.Solid, loop name "init"
+			Group.Solid : Set Alterable Value(1019) to 1
+
+		* Alterable Value(1000) of Group.Solid <> -1
+			Group.Solid : Set Alterable Value(1019) to 1
+
+		* On each one of Group.Platform, loop name "init"
+			Group.Platform : Set Alterable Value(1019) to 2
+
+		* Alterable Value(1000) of Group.Platform <> -1
+			Group.Platform : Set Alterable Value(1019) to 2
+
+	[ Group.Block & PowerUp(var 600) ]
+
+		// 考虑到 Group.Block 可能同时需要加入 Group.Solid，不纳入 Group.Instance 初始化体系
+		// 不支持同时属于 Group.Block 和 Group.PowerUp
+		// 对于静态 Block，请将判定设置在 Bouncing 动画中
+
+		// 使用变量 600~699
+		// -----以下为 Group.Block API-----
+		// 
+		// 600=0: 正常
+		//       =1: 被激活
+		// （请调用 Foreach 以激活 Block，不建议直接修改此项）
+		// 
+		// Foreach "block_activate": 激活 Block，使用默认 Sprout 方向
+		// Foreach "block_activate_manual": 激活 Block（请事先设置好 var.610）
+		// 
+		// 601=-1: 隐藏
+		//       =0: 正常（未初始化）
+		//       =1: 正常
+		// 
+		// 602=0: 未放入 PowerUp
+		//       =1: 已放入 PowerUp（顶出后不会被重置）
+		//       =-1: 无效化 PowerUp
+		// 
+		// 603=0: 二级状态自动蘑菇
+		// 604: 默认 Sprout 方向，默认值为 90
+		// 605: 强度（默认为 -1，砖块为 0）
+		// 
+		// 610: Sprout 方向，由激活对象设定
+		// 
+		// 620: 记录 Alpha 值的临时变量
+		// 621: 记录图层的临时变量
+		// 622: 记录动画序列的临时变量
+		// 623: 筛选用的临时变量
+		// 
+		// Foreach "block_create_bump": 用于创建顶判定
+		// 
+		// 以下 Foreach 可能需要自行补充内容
+		// Foreach "block_activated": 激活 Block 之后的 Setup
+		// Foreach "block_activate_failed"：激活失败（小个子顶砖）
+		// 
+		// -----以下为 Group.PowerUp API-----
+		// 
+		// 650=-1: 被装入
+		//       =0: 正常
+		//       =1: Sprout 状态
+		// 
+		// 651: Sprout 速度，默认为 1（≤0为禁用，需要物件自行处理，如金币）
+		// 652=1: 二级状态标识，用于判定自动蘑菇
+		// 
+		// 660: 装入 Block 对象的 Fixed 值
+		// 661: Sprout 方向，由 Group.Block 设定，默认 90
+		// 662: 记录图层的临时变量
+		// 663: 记录相对 Block X
+		// 664: 记录相对 Block Y
+		// 665: 计数用
+		// 666: 检测是否存在相对 Block
+		// 
+		// Foreach "powerup_sprout": 开启 Sprout
+		//  
+		// 以下 Foreach 可能需要自行补充内容，其中 Group.Gravity/Movable 会自动进行相关禁用/恢复
+		// Foreach "powerup_disable": 禁用正常状态
+		// Foreach "powerup_recover": 恢复正常状态
+		// Foreach "powerup_sprouted"：进入 Sprout 状态（通常用于设置音效）
+		// 
+		// -----以下为 Group.Gravity 专属砸砖 API-----
+		// 690: 顶砖强度
+		// 691: 砸砖强度
+		// 692=1: 创建顶砖判定
+		// 699=1: 可以顶砖
+		// 698=1: 可以砸砖
+		// 
+		// 695: 用于筛选
+		// 
+		// Foreach "gravity_hit_block_up": 顶到砖
+		// Foreach "gravity_hit_block_up_failed": 顶砖失败
+		// Foreach "gravity_hit_block_down": 砸到砖
+		// Foreach "gravity_hit_block_down_failed": 砸砖失败
+		// 
+		// -----以下为 Group.Movable 专属砸砖 API-----
+		// 680: 砸砖强度
+		// 689=1: 可以砸砖
+		// 
+		// 685: 用于筛选
+		// 
+		// Foreach "movable_hit_block": 砸到砖
+		// Foreach "movable_hit_block_failed": 砸砖失败
+
+		[ Block ]
+
+			* Alterable Value(601) of Group.Block = 0
+				Start loop for each one of Group.Block, loop name "block_solid_setup"
+
+			* Alterable Value(602) of Group.Block = -1
+				Start loop for each one of Group.Block, loop name "block_destroy_powerup"
+
+			* On each one of Group.Block, loop name "block_set_powerup"
+			+ Group.Block is overlapping Group.PowerUp
+			+ Alterable Value(650) of Group.PowerUp = 0
+				Group.Block : Set Alterable Value(602) to 1
+				Group.PowerUp : Set Alterable Value(1003) to 0
+				Group.PowerUp : Set Alterable Value(1000) to 1
+				Group.PowerUp : Set Alterable Value(1020) to 0
+				Group.PowerUp : Set Alterable Value(650) to -1
+				Group.PowerUp : Set Alterable Value(660) to Fixed( "Group.Block" )
+				Group.PowerUp : Set Alterable Value(663) to X( "Group.PowerUp" ) - X( "Group.Block" )
+				Group.PowerUp : Set Alterable Value(664) to Y( "Group.PowerUp" ) - Y( "Group.Block" )
+				Start loop for each one of Group.PowerUp, loop name "powerup_disable"
+
+			* On each one of Group.Block, loop name "block_destroy_powerup"
+			+ Alterable Value(660) of Group.PowerUp = Fixed( "Group.Block" )
+				Group.PowerUp : Destroy
+
+			* On each one of Group.Block, loop name "block_solid_setup"
+
+				+ Alterable Value(1019) of Group.Block = 0
+					Group.Block : Set Alterable Value(620) to AlphaCoef( "Group.Block" )
+					Group.Block : Set Alterable Value(622) to Anim Number( "Group.Block" )
+					 Group.Block : Set alpha-blending coefficient to 255
+					Group.Block : Change animation sequence to Bouncing
+					Group.Block : Add backdrop as obstacle
+					 Group.Block : Set alpha-blending coefficient to AltValN( "Group.Block", 620 )
+					Group.Block : Change animation sequence to AltValN( "Group.Block", 622 )
+
+				+ Alterable Value(1019) of Group.Block = 1
+					Group.Block : Set Alterable Value(900) to 0
+
+				+ Always
+					Group.Block : Set Alterable Value(601) to 1
+					Group.Block : Reappear
+
+			* On each one of Group.Block, loop name "block_create_bump"
+				New Objects : Create Bump Attack at (0,0) from Group.Block
+				Bump Attack : Set X position to X Left( "Group.Block" )
+				Bump Attack : Set Y position to Y Top( "Group.Block" ) - 8
+				 Bump Attack : Set X scale to ( X Right( "Group.Block" ) - X Left( "Group.Block" ) ) / 32.0 (Quality = 0)
+
+			// 激活
+
+			* On each one of Group.Block, loop name "block_activate"
+			+ Alterable Value(600) of Group.Block = 0
+				Group.Block : Set Alterable Value(610) to AltValN( "Group.Block", 604 )
+				Start loop for each one of Group.Block, loop name "block_activate_manual"
+
+			* On each one of Group.Block, loop name "block_activate_manual"
+			+ Alterable Value(600) of Group.Block = 0
+				Group.Block : Set Alterable Value(600) to 1
+
+				+ Alterable Value(601) of Group.Block = -1
+					Start loop for each one of Group.Block, loop name "block_solid_setup"
+
+				+ Alterable Value(603) of Group.Block <> 0
+				  OR (logical)
+				+ Alterable Value(603) of Group.Block = 0
+				+ Mario of Globalvar >= 1
+
+				+ Alterable Value(660) of Group.PowerUp = Fixed( "Group.Block" )
+				+ Alterable Value(650) of Group.PowerUp = -1
+
+					+ Alterable Value(652) of Group.PowerUp <> 1
+					  OR (logical)
+					+ Alterable Value(603) of Group.Block <> 0
+					  OR (logical)
+					+ Mario of Globalvar >= 1
+						Group.PowerUp : Set Alterable Value(661) to AltValN( "Group.Block", 610 )
+						Start loop for each one of Group.PowerUp, loop name "powerup_sprout"
+
+					+ Alterable Value(652) of Group.PowerUp = 1
+					+ Alterable Value(603) of Group.Block = 0
+					+ Mario of Globalvar = 0
+						New Objects : Create Mushroom Red at (0,0) from Group.PowerUp
+						Group.Block : Set Alterable Value(623) to Fixed( "Mushroom Red" )
+						Mushroom Red : Set Alterable Value(663) to AltValN( "Group.PowerUp", 663 )
+						Mushroom Red : Set Alterable Value(664) to AltValN( "Group.PowerUp", 664 )
+						Group.PowerUp : Destroy
+
+						+ Fixed value of Mushroom Red = AltValN( "Group.Block", 623 )
+							Start loop for each one of Mushroom Red, loop name "init"
+							Start loop for each one of Mushroom Red, loop name "powerup_sprout"
+
+						+ Fixed value of Mushroom Red = AltValN( "Group.Block", 623 )
+							Mushroom Red : Set Alterable Value(660) to Fixed( "Group.Block" )
+							Mushroom Red : Set Alterable Value(661) to AltValN( "Group.Block", 610 )
+
+				+ Always
+					Start loop for each one of Group.Block, loop name "block_activated"
+
+			* On each one of Group.Block, loop name "block_activate_failed"
+			+ Alterable Value(600) of Group.Block = 0
+			+ Alterable Value(601) of Group.Block = -1
+				Start loop for each one of Group.Block, loop name "block_solid_setup"
+
+		[ PowerUp ]
+
+			// 声明
+
+			* On each one of Group.PowerUp, loop name "init"
+				Group.PowerUp : Set Alterable Value(1016) to 2
+				Group.PowerUp : Set Alterable Value(651) to 1
+				Group.PowerUp : Set Alterable Value(661) to 90
+
+			* Alterable Value(1016) of Group.PowerUp = 0
+				Start loop for each one of Group.PowerUp, loop name "init"
+
+			// Sprout
+
+			* Alterable Value(650) of Group.PowerUp = -1
+				Start loop for each one of Group.PowerUp, loop name "powerup_disable"
+				Group.PowerUp : Make invisible
+
+			* Alterable Value(650) of Group.PowerUp = 1
+
+				+ Always
+					Start loop for each one of Group.PowerUp, loop name "powerup_disable"
+
+				+ Always
+					Group.PowerUp : Set Alterable Value(666) to 0
+					Start loop for each one of Group.PowerUp, loop name "powerup_sprout_fixed"
+
+				+ Alterable Value(666) of Group.PowerUp = 0
+					Group.PowerUp : Add AltValN( "Group.PowerUp", 651 ) * Cos(AltValN( "Group.PowerUp", 661 )) to Alterable Value X
+					Group.PowerUp : Add 0 - AltValN( "Group.PowerUp", 651 ) * Sin(AltValN( "Group.PowerUp", 661 )) to Alterable Value Y
+					Group.PowerUp : Set X position to Alterable Value X( "Group.PowerUp" )
+					Group.PowerUp : Set Y position to Alterable Value Y( "Group.PowerUp" )
+
+				+ Always
+					 Group.PowerUp : Move to layer AltValN( "Group.PowerUp", 662 )
+					Group.PowerUp : Set Alterable Value(666) to 2
+					Start loop for each one of Group.PowerUp, loop name "powerup_detect_solid"
+
+				+ Alterable Value(666) of Group.PowerUp = 2
+					Group.PowerUp : Set Alterable Value(650) to 0
+					Start loop for each one of Group.PowerUp, loop name "powerup_recover"
+
+			* On each one of Group.PowerUp, loop name "powerup_sprout_fixed"
+
+				+ Fixed value of Group.Block = AltValN( "Group.PowerUp", 660 )
+					Group.PowerUp : Set Alterable Value(666) to 1
+					Group.PowerUp : Add AltValN( "Group.PowerUp", 651 ) to Alterable Value(665)
+					Group.PowerUp : Set X position to X( "Group.Block" ) + AltValN( "Group.PowerUp", 663 ) + AltValN( "Group.PowerUp", 665 ) * Cos(AltValN( "Group.PowerUp", 661 ))
+					Group.PowerUp : Set Y position to Y( "Group.Block" ) + AltValN( "Group.PowerUp", 664 ) - AltValN( "Group.PowerUp", 665 ) * Sin(AltValN( "Group.PowerUp", 661 ))
+					Group.PowerUp : Set Alterable Value X to X( "Group.PowerUp" )
+					Group.PowerUp : Set Alterable Value Y to Y( "Group.PowerUp" )
+
+			* On each one of Group.PowerUp, loop name "powerup_sprout"
+
+				+ Always
+					Group.PowerUp : Set Alterable Value X to X( "Group.PowerUp" )
+					Group.PowerUp : Set Alterable Value Y to Y( "Group.PowerUp" )
+					Group.PowerUp : Set Alterable Value(650) to 1
+					Group.PowerUp : Set Alterable Value(665) to 0
+					Group.PowerUp : Set Alterable Value(662) to Layer( "Group.PowerUp" )
+					Group.PowerUp : Reappear
+					Start loop for each one of Group.PowerUp, loop name "powerup_disable"
+
+				+ Always
+					Start loop for each one of Group.PowerUp, loop name "powerup_sprouted"
+
+			* On each one of Group.PowerUp, loop name "powerup_detect_solid"
+
+				+ Group.PowerUp is overlapping a backdrop
+				  OR (logical)
+				+ Group.PowerUp is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = 0
+				  OR (logical)
+				+ Group.PowerUp is overlapping Group.Solid
+				+ Alterable Value(900) of Group.Solid = AltValN( "Group.PowerUp", 1002 )
+					Group.PowerUp : Set Alterable Value(666) to 0
+
+			* On each one of Group.PowerUp, loop name "powerup_disable"
+
+				+ Alterable Value(1011) of Group.PowerUp = 1
+					Group.PowerUp : Set Alterable Value(100) to -1
+
+				+ Alterable Value(1012) of Group.PowerUp = 1
+					Group.PowerUp : Set Alterable Value(200) to -1
+
+			* On each one of Group.PowerUp, loop name "powerup_recover"
+
+				+ Alterable Value(1011) of Group.PowerUp = 1
+					Group.PowerUp : Set Alterable Value(100) to 1
+
+				+ Alterable Value(1012) of Group.PowerUp = 1
+					Group.PowerUp : Set Alterable Value(200) to 0
+
+		[ Gravity & Movable ]
+
+			// Group.Gravity
+
+			* On each one of Group.Gravity, loop name "gravity_up_finished"
+			+ Alterable Value(699) of Group.Gravity = 1
+
+				+ Always
+					Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+				+ Group.Gravity is overlapping Group.Block
+				+ Alterable Value(600) of Group.Block = 0
+
+					+ Alterable Value(692) of Group.Gravity = 1
+						Start loop for each one of Group.Block, loop name "block_create_bump"
+
+					+ Alterable Value(605) of Group.Block <= AltValN( "Group.Gravity", 690 )
+						Group.Block : Set Alterable Value(610) to Round(( AltValN( "Group.Gravity", 102 ) + 180 ) / 90.0) * 90
+						Start loop for each one of Group.Block, loop name "block_activate_manual"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_up"
+
+					+ Alterable Value(605) of Group.Block > AltValN( "Group.Gravity", 690 )
+						Start loop for each one of Group.Block, loop name "block_activate_failed"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_up_failed"
+
+				+ Always
+					Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+			* On each one of Group.Gravity, loop name "gravity_down_finished"
+			+ Alterable Value(698) of Group.Gravity = 1
+
+				+ Always
+					Group.Gravity : Add Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add 0 - Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+				+ Group.Gravity is overlapping Group.Block
+				+ Alterable Value(600) of Group.Block = 0
+
+					+ Alterable Value(692) of Group.Gravity = 1
+						Start loop for each one of Group.Block, loop name "block_create_bump"
+
+					+ Alterable Value(605) of Group.Block <= AltValN( "Group.Gravity", 691 )
+						Group.Block : Set Alterable Value(610) to Round(( AltValN( "Group.Gravity", 102 ) ) / 90.0) * 90
+						Start loop for each one of Group.Block, loop name "block_activate_manual"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_down"
+
+					+ Alterable Value(605) of Group.Block > AltValN( "Group.Gravity", 691 )
+						Start loop for each one of Group.Block, loop name "block_activate_failed"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_down_failed"
+
+				+ Always
+					Group.Gravity : Add 0 - Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+			// 隐藏砖
+
+			* On each one of Group.Gravity, loop name "gravity_up_detect_block"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(695) to 1
+
+				+ Group.Gravity is overlapping Group.Block
+				+ Alterable Value(601) of Group.Block = -1
+					Group.Block : Set Alterable Value(621) to Layer( "Group.Block" )
+					Start loop for each one of Group.Block, loop name "block_hidden_gravity_up"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(695) to 0
+
+			* On each one of Group.Block, loop name "block_hidden_gravity_up"
+
+				+ Always
+					 Group.Block : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Alterable Value(695) of Group.Gravity = 1
+					 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+					Group.Gravity : Add 16 * Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add -16 * Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+				+ Alterable Value(695) of Group.Gravity = 1
+				+ NOT Group.Gravity is overlapping Group.Block
+
+					+ Always
+						 Group.Block : Move to layer AltValN( "Group.Block", 621 )
+
+					+ Alterable Value(692) of Group.Gravity = 1
+						Start loop for each one of Group.Block, loop name "block_create_bump"
+
+					+ Alterable Value(690) of Group.Gravity >= AltValN( "Group.Block", 605 )
+						Group.Block : Set Alterable Value(610) to Round(( AltValN( "Group.Gravity", 102 ) + 180 ) / 90.0) * 90
+						Start loop for each one of Group.Block, loop name "block_activate_manual"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_up"
+
+					+ Alterable Value(690) of Group.Gravity < AltValN( "Group.Block", 605 )
+						Start loop for each one of Group.Block, loop name "block_activate_failed"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_up_failed"
+
+				+ Alterable Value(695) of Group.Gravity = 1
+					 Group.Gravity : Move to layer AltValN( "Group.Block", 621 )
+					Group.Gravity : Add -16 * Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add 16 * Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+				+ Always
+					 Group.Block : Move to layer AltValN( "Group.Block", 621 )
+
+			* On each one of Group.Gravity, loop name "gravity_down_detect_block"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(695) to 1
+
+				+ Group.Gravity is overlapping Group.Block
+				+ Alterable Value(601) of Group.Block = -1
+					Group.Block : Set Alterable Value(621) to Layer( "Group.Block" )
+					Start loop for each one of Group.Block, loop name "block_hidden_gravity_down"
+
+				+ Always
+					Group.Gravity : Set Alterable Value(695) to 0
+
+			* On each one of Group.Block, loop name "block_hidden_gravity_down"
+
+				+ Always
+					 Group.Block : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Alterable Value(695) of Group.Gravity = 1
+					 Group.Gravity : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+					Group.Gravity : Add -16 * Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add 16 * Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+				+ Alterable Value(695) of Group.Gravity = 1
+				+ NOT Group.Gravity is overlapping Group.Block
+
+					+ Always
+						 Group.Block : Move to layer AltValN( "Group.Block", 621 )
+
+					+ Alterable Value(692) of Group.Gravity = 1
+						Start loop for each one of Group.Block, loop name "block_create_bump"
+
+					+ Alterable Value(691) of Group.Gravity >= AltValN( "Group.Block", 605 )
+						Group.Block : Set Alterable Value(610) to Round(( AltValN( "Group.Gravity", 102 ) ) / 90.0) * 90
+						Start loop for each one of Group.Block, loop name "block_activate_manual"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_down"
+
+					+ Alterable Value(691) of Group.Gravity < AltValN( "Group.Block", 605 )
+						Start loop for each one of Group.Block, loop name "block_activate_failed"
+						Start loop for each one of Group.Gravity, loop name "gravity_hit_block_down_failed"
+
+				+ Alterable Value(695) of Group.Gravity = 1
+					 Group.Gravity : Move to layer AltValN( "Group.Block", 621 )
+					Group.Gravity : Add 16 * Cos(AltValN( "Group.Gravity", 102 )) to Alterable Value X
+					Group.Gravity : Add -16 * Sin(AltValN( "Group.Gravity", 102 )) to Alterable Value Y
+					Group.Gravity : Set X position to Alterable Value X( "Group.Gravity" )
+					Group.Gravity : Set Y position to Alterable Value Y( "Group.Gravity" )
+
+				+ Always
+					 Group.Block : Move to layer AltValN( "Group.Block", 621 )
+
+			// Group.Movable
+
+			* On each one of Group.Movable, loop name "movable_place_finished"
+			+ Alterable Value(689) of Group.Movable = 1
+
+				+ Always
+					Group.Movable : Add Cos(AltValN( "Group.Movable", 202 )) to Alterable Value X
+					Group.Movable : Add 0 - Sin(AltValN( "Group.Movable", 202 )) to Alterable Value Y
+					Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+					Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+
+				+ Group.Movable is overlapping Group.Block
+				+ Alterable Value(600) of Group.Block = 0
+
+					+ Alterable Value(605) of Group.Block <= AltValN( "Group.Movable", 680 )
+						Start loop for each one of Group.Block, loop name "block_activate"
+						Start loop for each one of Group.Movable, loop name "movable_hit_block"
+
+					+ Alterable Value(605) of Group.Block > AltValN( "Group.Movable", 680 )
+						Start loop for each one of Group.Block, loop name "block_activate_failed"
+						Start loop for each one of Group.Movable, loop name "movable_hit_block_failed"
+
+				+ Always
+					Group.Movable : Add 0 - Cos(AltValN( "Group.Movable", 202 )) to Alterable Value X
+					Group.Movable : Add Sin(AltValN( "Group.Movable", 202 )) to Alterable Value Y
+					Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+					Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+
+			* On each one of Group.Movable, loop name "movable_detect_block"
+
+				+ Always
+					Group.Movable : Set Alterable Value(685) to 1
+
+				+ Group.Movable is overlapping Group.Block
+				+ Alterable Value(601) of Group.Block = -1
+					Group.Block : Set Alterable Value(621) to Layer( "Group.Block" )
+					Start loop for each one of Group.Block, loop name "block_hidden_movable"
+
+				+ Always
+					Group.Movable : Set Alterable Value(685) to 0
+
+			* On each one of Group.Block, loop name "block_hidden_movable"
+
+				+ Always
+					 Group.Block : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+
+				+ Alterable Value(685) of Group.Movable = 1
+					 Group.Movable : Move to layer lyrGetLayerIndex( "Layer object", "sys_overlap" )
+					Group.Movable : Add -16 * Cos(AltValN( "Group.Movable", 202 )) to Alterable Value X
+					Group.Movable : Add 16 * Sin(AltValN( "Group.Movable", 202 )) to Alterable Value Y
+					Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+					Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+
+				+ Alterable Value(685) of Group.Movable = 1
+				+ NOT Group.Movable is overlapping Group.Block
+
+					+ Always
+						 Group.Block : Move to layer AltValN( "Group.Block", 621 )
+
+					+ Alterable Value(680) of Group.Movable >= AltValN( "Group.Block", 605 )
+						Start loop for each one of Group.Block, loop name "block_activate"
+						Start loop for each one of Group.Movable, loop name "movable_hit_block"
+
+					+ Alterable Value(680) of Group.Movable < AltValN( "Group.Block", 605 )
+						Start loop for each one of Group.Block, loop name "block_activate_failed"
+						Start loop for each one of Group.Movable, loop name "movable_hit_block_failed"
+
+				+ Alterable Value(685) of Group.Movable = 1
+					 Group.Movable : Move to layer AltValN( "Group.Block", 621 )
+					Group.Movable : Add 16 * Cos(AltValN( "Group.Movable", 202 )) to Alterable Value X
+					Group.Movable : Add -16 * Sin(AltValN( "Group.Movable", 202 )) to Alterable Value Y
+					Group.Movable : Set X position to Alterable Value X( "Group.Movable" )
+					Group.Movable : Set Y position to Alterable Value Y( "Group.Movable" )
+
+				+ Always
+					 Group.Block : Move to layer AltValN( "Group.Block", 621 )
+
+	* Alterable Value(1000) of Group.Instance <> -1
+	+ Alterable Value(3000) of Group.Instance = 1
+		Group.Instance : Change animation sequence to AltValN( "Group.Instance", 3003 )
+		Group.Instance : Force animation frame to AltValN( "Group.Instance", 3004 )
+

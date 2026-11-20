@@ -1,0 +1,48 @@
+* Alterable Value(400) of Fly Troopa Blue = 1
+	New Objects : Create Troopa Death Blue at (0,0) from Fly Troopa Blue
+	Fly Troopa Blue : Destroy
+
+* Mario is overlapping Fly Troopa Blue
++ Alterable Value(1000) of Fly Troopa Blue <> -1
+	Start loop for each one of Fly Troopa Blue, loop name "stomp_start"
+
+* On each one of Fly Troopa Blue, loop name "stomp_start"
+
+	+ Always
+		Fly Troopa Blue : Set Alterable Value(411) to 16
+		Start loop for each one of Fly Troopa Blue, loop name "stomp_detect"
+
+	+ Alterable Value(410) of Fly Troopa Blue = 1
+		Start loop for each one of Mario, loop name "mario_stomp"
+		New Objects : Create Score 200 at (0,0) from Fly Troopa Blue
+		Start loop for each one of Fly Troopa Blue, loop name "enemy_death"
+
+	+ Alterable Value(410) of Fly Troopa Blue = 0
+	+ Alterable Value(1000) of Mario <> -1
+	+ Mario: 无敌 is off
+		 Mario : Set 受伤 on
+
+* On each one of Fly Troopa Blue, loop name "enemy_death"
+	New Objects : Create Troopa Blue at (0,0) from Fly Troopa Blue (oriented)
+	Troopa Blue : Set Alterable Value X to X( "Troopa Blue" )
+	Troopa Blue : Set Alterable Value Y to Y( "Troopa Blue" )
+	Troopa Blue : Set Alterable Value(1000) to 1
+	Troopa Blue : Set Alterable Value Z to 7
+	Start loop for each one of Troopa Blue, loop name "init"
+	Fly Troopa Blue : Destroy
+
+* Fireball Mario is overlapping Fly Troopa Blue
+	Fireball Mario : Set Alterable Value(204) to 1
+	New Objects : Create Score 200 at (0,0) from Fly Troopa Blue
+	New Objects : Create Troopa Death Blue at (0,0) from Fly Troopa Blue
+	Fly Troopa Blue : Destroy
+	Sound : Play sample kick_2
+
+* Alterable Value A of Beet Mario < 3
++ Beet Mario is overlapping Fly Troopa Blue
+	Beet Mario : Set Alterable Value(204) to 1
+	New Objects : Create Score 200 at (0,0) from Fly Troopa Blue
+	New Objects : Create Troopa Death Blue at (0,0) from Fly Troopa Blue
+	Fly Troopa Blue : Destroy
+	Sound : Play sample kick_2
+
