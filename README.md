@@ -22,3 +22,7 @@ kept unmodified so its relative links and scripts keep working.
 The plugin does not modify Fusion. Generated event data must still be pasted
 into Fusion and verified there; the bundled verifier only checks structure and
 references locally. UE here means Super Mario Ultra Edition, not Unreal Engine.
+
+## Development
+
+This project was developed with the assistance of ChatGPT and DeepSeek models.
