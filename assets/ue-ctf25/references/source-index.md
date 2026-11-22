@@ -2,6 +2,16 @@
 
 The package covers the UE preparation material supplied in this chat. Original captures are preserved byte-for-byte and each captured payload was checked against its embedded length and SHA-256. Read the text first for event/API tasks, and use JSON/binary files when constructing or inspecting clipboard data.
 
+## Format and tooling (read before generating events)
+
+- [Binary event format](event-binary-format.md) — decoded `CF_CNCV25_EVENTS`: package header, event/record headers, parameters, `SJBO` object table (Active/Group, icons, qualifier ids), `TYAL`, trailer.
+- [Opcode cookbook](opcode-cookbook.md) — verified condition/action templates with byte offsets, parameter layouts, Mario variable indices, expression fingerprints and the four look-alike jump branches.
+- [Clipboard workflow](clipboard-workflow.md) — direct import/export from the agent shell, verification loop, fallback.
+- [Verification workflow](event-verification.md) — local structure checks, readback comparison, regression self-test.
+- `scripts/ctf_events.py` — parse / describe / verify / build library with provenance-checked templates (`selftest` round-trips supported event exports and explicitly skips whole-behavior wrappers).
+- `scripts/ImportAndVerify.ps1` — import a package to the clipboard and compare the readback hash in one command.
+- `scripts/example_infinite_jump.py` — worked example: flag-gated mid-air jump.
+
 ## Manual
 
 - [UE Manual.pdf](UE%20Manual.pdf) — original 22-page manual for Super Mario Ultra Edition 231211.1.

@@ -1,20 +1,71 @@
-# Fixed verification workflow
+# 固定验证流程
 
-Run these commands from the skill root for the examples. For actual work, pass absolute paths or paths relative to your current directory. The verifier uses Python 3's standard library and no machine-specific configuration. It processes files locally and does not open the clipboard.
+目标：把“结构正确”和“Fusion 里真的对”分开，二者都要过。
 
-1. **Keep a reference export.** Copy the relevant target events from Fusion with ClipboardBridge. Identify the target object names, conditions, actions, values, and intended event position from that export.
-2. **Check the generated payload.** Run `python scripts/verify_events.py candidate.json --dump`. For transformations intended to preserve all metadata byte-for-byte, add `--template target-export.json`. Skip that comparison when comments or object metadata intentionally change, and review those changes separately. Check IDs and parameter bytes against the source records. Review object selection, expressions, event order and every green Immediate Condition before import.
-3. **Paste and re-export.** Use ClipboardBridge import. Paste into the intended event list in a test copy and inspect Fusion's displayed conditions and actions. Re-copy just the inserted events as a new JSON export.
-4. **Compare the readback.** Run `python scripts/verify_events.py candidate.json --readback fusion-readback.json`. An exact match applies to the event payload, independently of the session-assigned clipboard ID. On mismatch, validate and dump the readback separately, compare both event lists in Fusion, and record any differences. A runtime behavior change still needs an in-engine test.
-
-The verifier checks clipboard hashes and lengths, sample-format package and stream boundaries, event and parameter counts, and known nested Immediate Conditions. It recognizes the observed `On loop` and Active-object ForEach IDs. Add other confirmed pairs with `--immediate TYPE,OPCODE`, using the equals form for negative types (for example `--immediate=-1,-16`). A group container may use a nonzero hierarchy field for top-level events, so the checker uses the observed child-event flag for the nesting check. This is not a full Fusion decoder or object-table validator. It expects complete `CF_CNCV25_EVENTS` packages and does not parse bare streams or `MMF2BEHAVIOR` wrappers.
-
-## Reference runs
+## 0. 生成（优先用库，不要从零拼字节）
 
 ```powershell
-python scripts/verify_events.py references/original-code/mario-init.bin
-python scripts/verify_events.py references/original-code/validated-mario-bw1.json --dump
-python scripts/verify_events.py references/verification-samples/run-fullspeed.json --template references/original-code/mario-movement.json --readback references/verification-samples/run-fullspeed-readback.json --dump
+python scripts/ctf_events.py describe candidate.json    # 对象名、条件/动作、参数摘要
+python scripts/ctf_events.py verify   candidate.json    # 结构、对象引用、立即条件层级
 ```
 
-The last two files come from the maintainer's `ue-ctf25_20261119_2245.zip`. The readback is its `ctf-clipboard-2026-11-19_22-43-47-574.json`. The example has one top-level event, three conditions (held Fire 2, Mario 1000 and 200 both unequal to -1), and one action (Mario AT=60). The numeric value is specific to the example. Its captured readback matches the payload byte-for-byte.
+`describe` 输出里能看到已知条件/动作名称、对象 id 对应的名字，以及参数体的十六进制摘要
+（每个参数最多显示前 30 字节）。长表达式的指纹可能不在摘要里，须用模板断言或 `find --contains` 核对。
+**用数字核对语义**，不要只凭“看起来像”：
+
+- 例：`101 = 0 - 跳跃初速度 - AltValN(103)` 的表达式里必须出现 `67 00 00 00`（103），
+  出现 `69 00 00 00`（105）就是拿成了“跳出水”分支。
+- `template("mario_jump_ground")` 已内置这条指纹断言；自己拼的时候也要断言。
+
+## 1. 保留参考导出
+
+改任何事件前，先让用户从 Fusion 复制相关事件，用
+[ClipboardBridge](clipboard-workflow.md) 导出并确认身份（时间戳/哈希）。
+记下目标对象名、限定符、变量/标志位编号、期望插入位置。
+
+## 2. 本地校验生成包
+
+```powershell
+python scripts/verify_events.py candidate.json --dump
+python scripts/verify_events.py candidate.json --template target-export.json   # 只改事件、元数据不变时
+```
+
+`--template` 要求元数据逐字节相同；新增对象或改对象表时不要加。
+
+补充检查（`verify_events.py` 不覆盖的）：
+
+- 每个条件/动作头及已知 t1 参数引用的对象 id 都在 SJBO 里（`ctf_events.py verify` 会查）；
+  表达式、创建对象等其它参数中的对象引用尚未完整解析，仍须人工核对；
+- 立即条件（`On loop`、`On each one`）只出现在顶层或组容器之下——
+  普通子事件以事件头 `0x8000` 标志判断，不能只看层级字段是否非零。
+  新旧校验器目前自动识别的立即条件均仅有上述两类，其它绿色立即条件须人工检查；
+- 参数里的数字符合预期（变量下标、标志位编号、运算符）；
+- 事件头：`id`/`previous id` 从 1 开始、第一个的 previous=0。
+
+## 3. 粘贴并重新导出
+
+用 ClipboardBridge Import（见 clipboard-workflow），请用户在测试副本里粘贴，
+检查 Fusion 显示的：
+条件顺序与取反、对象名、变量/标志编号、动作参数、插入层级。
+
+然后只重新复制**刚插入的事件**，再导出成 readback JSON。
+
+## 4. 回读比对
+
+```powershell
+python scripts/verify_events.py candidate.json --readback fusion-readback.json
+```
+
+逐字节相同只说明事件载荷没被 Fusion 改写；**运行效果仍要进游戏测**。
+
+## 5. 回归自测（改脚本/模板后必跑）
+
+```powershell
+python scripts/ctf_events.py selftest     # 全部样本必须逐字节 round-trip，模板指纹必须通过
+python -B -m unittest discover -s scripts -p test_ctf_events.py  # 错误输入、Windows 路径及模拟桥回归
+```
+
+`selftest` 目前覆盖 `references/original-code/*.json` 的解析→重建一致性，
+只跳过明确的 `MMF2BEHAVIOR` 包；损坏的事件包会导致失败。
+它不代表所有源事件已通过语义校验或 Fusion 运行测试。
+新增模板时把它加进 `PROVENANCE`，指纹加进 `FINGERPRINTS`。

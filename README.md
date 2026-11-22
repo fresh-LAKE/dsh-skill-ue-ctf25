@@ -7,7 +7,8 @@ The skill is registered through `ctx.skills` and loads on demand, either by the
 model or through the skill row in the Web UI. Its instructions document UE
 Behavior APIs, object qualifiers, the binary event clipboard, and the fixed
 verification workflow. `assets/ue-ctf25` is the original plugin's skill tree,
-kept unmodified so its relative links and scripts keep working.
+extended with local binary-event tooling while retaining its relative links and
+original reference captures.
 
 ## Contents
 
